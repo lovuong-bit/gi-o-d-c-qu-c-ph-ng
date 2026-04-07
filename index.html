@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TRÒ CHƠI SINH HỌC 11 • Phần I: Sinh sản vô tính | Bài 24</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@700&amp;display=swap");
+
+      :root {
+        --primary: #10b981;
+      }
+
+      body {
+        font-family: "Inter", system_ui, sans-serif;
+        background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 100%);
+        overflow: hidden;
+      }
+
+      .title-font {
+        font-family: "Playfair Display", sans-serif;
+      }
+
+      .bird {
+        position: absolute;
+        font-size: 28px;
+        z-index: 10;
+        opacity: 0.85;
+        animation: flyAcross linear infinite;
+        filter: drop-shadow(0 4px 6px rgba(16, 185, 129, 0.3));
+      }
+
+      @keyframes flyAcross {
+        0% {
+          transform: translateX(-120px) rotate(0deg);
+        }
+        100% {
+          transform: translateX(calc(100vw + 120px)) rotate(25deg);
+        }
+      }
+
+      .wheel-container {
+        animation: wheelPulse 2s ease-in-out infinite;
+      }
+
+      @keyframes wheelPulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .question-card {
+        animation: questionPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      @keyframes questionPop {
+        0% {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .leaf-float {
+        animation: floatLeaf 8s ease-in-out infinite;
+      }
+
+      .fullscreen-btn {
+        transition: all 0.3s ease;
+      }
+      .fullscreen-btn:hover {
+        transform: scale(1.15);
+        color: #10b981;
+      }
+
+      .option {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .option:hover {
+        transform: translateY(-4px) scale(1.03);
+        box-shadow: 0 20px 25px -5px rgb(16 185 129 / 0.2);
+      }
+
+      .correct-pop {
+        animation: correctAnim 0.4s ease;
+      }
+
+      @keyframes correctAnim {
+        0% {
+          transform: scale(1);
+        }
+        40% {
+          transform: scale(1.15);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen relative">
+    <!-- BACKGROUND BIRDS -->
+    <div
+      id="birds-container"
+      class="absolute inset-0 pointer-events-none"
+    ></div>
+
+    <!-- HEADER -->
+    <div
+      class="bg-gradient-to-r from-emerald-400 to-teal-400 text-white shadow-xl sticky top-0 z-50"
+    >
+      <div
+        class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between"
+      >
+        <div class="flex items-center gap-4">
+          <div class="text-4xl">🌱</div>
+          <div>
+            <h1 class="title-font text-3xl font-bold tracking-tighter">
+              SINH HỌC 11
+            </h1>
+            <p class="text-emerald-100 text-sm -mt-1 font-medium">
+              Chân trời sáng tạo • Bài 24
+            </p>
+          </div>
+          <div
+            class="px-5 py-1 bg-white/20 backdrop-blur-md rounded-3xl text-sm font-semibold flex items-center gap-2"
+          >
+            <i class="fas fa-leaf"></i>
+            PHẦN I: SINH SẢN VÔ TÍNH
+          </div>
+        </div>
+
+        <div class="text-center">
+          <div class="text-2xl font-bold title-font tracking-tighter">
+            TRÒ CHƠI ÔN TẬP
+          </div>
+          <p class="text-emerald-100 text-xs">10 câu hỏi</p>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <!-- NÚT TOÀN MÀN HÌNH -->
+          <button
+            onclick="toggleFullscreen()"
+            id="fullscreen-btn"
+            class="fullscreen-btn flex items-center justify-center w-10 h-10 bg-white/20 hover:bg-white/30 rounded-2xl text-2xl transition-all"
+          >
+            <i class="fas fa-expand"></i>
+          </button>
+
+          <div class="flex items-center bg-white/20 px-4 h-9 rounded-3xl gap-2">
+            <span class="relative flex h-3 w-3">
+              <span
+                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"
+              ></span>
+              <span
+                class="relative inline-flex rounded-full h-3 w-3 bg-white"
+              ></span>
+            </span>
+            SGK CHÂN TRỜI SÁNG TẠO
+          </div>
+          <button
+            onclick="restartGame()"
+            class="flex items-center gap-2 bg-white text-emerald-600 px-6 py-2 rounded-3xl font-semibold hover:shadow-lg"
+          >
+            <i class="fas fa-redo"></i>
+            CHƠI LẠI
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto px-6 pt-8 pb-12 relative z-20">
+      <!-- START SCREEN -->
+      <div id="start-screen">
+        <div class="text-center py-16">
+          <div
+            class="inline-flex items-center gap-3 bg-white shadow-xl rounded-3xl px-8 py-4 mb-8 text-emerald-600"
+          >
+            <i class="fas fa-gamepad text-4xl"></i>
+            <span class="text-3xl font-bold title-font"
+              >TRÒ CHƠI SINH SẢN VÔ TÍNH</span
+            >
+          </div>
+
+          <h2
+            class="text-6xl title-font font-bold text-emerald-800 leading-none mb-4"
+          >
+            Phần I • Bài 24
+          </h2>
+          <p class="text-2xl text-emerald-600 mb-10">
+            Sinh sản ở thực vật • Sách giáo khoa Sinh học 11 Chân trời sáng tạo
+          </p>
+
+          <div class="flex justify-center gap-8 mb-12">
+            <div class="text-center">
+              <div class="text-7xl mb-2">🌱</div>
+              <div class="font-semibold">Sinh sản sinh dưỡng</div>
+              <div class="text-xs text-emerald-500">Hình 24.1 SGK</div>
+            </div>
+            <div class="text-center">
+              <div class="text-7xl mb-2">🧬</div>
+              <div class="font-semibold">Sinh sản bằng bào tử</div>
+              <div class="text-xs text-emerald-500">Hình 24.2 SGK</div>
+            </div>
+          </div>
+
+          <button
+            onclick="startGame()"
+            class="bg-emerald-500 hover:bg-emerald-600 text-white text-2xl font-semibold px-14 py-6 rounded-3xl shadow-2xl shadow-emerald-500/40 flex items-center gap-4 mx-auto"
+          >
+            <span>BẮT ĐẦU TRÒ CHƠI NGAY!</span>
+            <i class="fas fa-arrow-right text-3xl"></i>
+          </button>
+
+          <p class="text-emerald-500 mt-8 text-sm">
+            KHÔ GÀ /// BÃ MÍA /// ĐỘ MIXI
+          </p>
+        </div>
+      </div>
+
+      <!-- GAME SCREEN -->
+      <div id="game-screen" class="hidden">
+        <!-- PROGRESS -->
+        <div class="flex items-center justify-between mb-8 px-4">
+          <div class="text-emerald-700 font-medium flex items-center gap-2">
+            <span id="current-question">Câu 1</span>
+            <span class="text-emerald-400">/ 10</span>
+          </div>
+          <div class="h-3 w-72 bg-emerald-100 rounded-3xl overflow-hidden">
+            <div
+              id="progress-bar"
+              class="h-3 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-3xl w-1/10"
+            ></div>
+          </div>
+          <div
+            onclick="showWheel()"
+            class="cursor-pointer flex items-center gap-2 text-emerald-600 hover:text-emerald-700"
+          >
+            <i class="fas fa-sync-alt"></i>
+            <span class="font-semibold">Quay số may mắn</span>
+          </div>
+        </div>
+
+        <!-- WHEEL SECTION -->
+        <div
+          id="wheel-section"
+          class="bg-white rounded-3xl shadow-2xl p-8 mb-8"
+        >
+          <div class="text-center mb-6">
+            <h3 class="text-2xl font-semibold text-emerald-700 mb-1">
+              🎡 VÒNG QUAY MAY MẮN 1 - 52
+            </h3>
+            <p class="text-emerald-500 text-sm">
+              Quay để chọn số ngẫu nhiên rồi click vào câu hỏi!
+            </p>
+          </div>
+
+          <div
+            class="wheel-container mx-auto flex justify-center relative"
+            style="width: 320px; height: 320px"
+          >
+            <canvas
+              id="wheel-canvas"
+              width="320"
+              height="320"
+              class="rounded-full shadow-xl"
+            ></canvas>
+            <div
+              class="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-b-[30px] border-b-red-500 z-10"
+            ></div>
+            <div
+              id="wheel-result"
+              class="absolute inset-0 flex items-center justify-center text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-emerald-400 to-teal-400 pointer-events-none hidden"
+            ></div>
+          </div>
+
+          <div class="flex justify-center gap-6 mt-8">
+            <button
+              onclick="spinWheel()"
+              id="spin-btn"
+              class="bg-emerald-500 hover:bg-emerald-600 text-white px-10 py-4 rounded-3xl text-xl font-semibold flex items-center gap-3 shadow-lg"
+            >
+              <i class="fas fa-sync-alt"></i>
+              QUAY NGAY!
+            </button>
+
+            <button
+              onclick="goToQuestion()"
+              id="go-question-btn"
+              class="hidden bg-gradient-to-r from-teal-400 to-emerald-500 text-white px-10 py-4 rounded-3xl text-xl font-semibold flex items-center gap-3"
+            >
+              <i class="fas fa-arrow-right"></i>
+              CLICK VÀO CÂU HỎI
+            </button>
+          </div>
+        </div>
+
+        <!-- QUESTION SECTION -->
+        <div
+          id="question-section"
+          class="hidden bg-white rounded-3xl shadow-2xl p-8 question-card"
+        >
+          <div
+            id="question-text"
+            class="text-2xl font-semibold text-emerald-800 mb-8 leading-tight"
+          ></div>
+
+          <div
+            id="options-container"
+            class="grid grid-cols-1 md:grid-cols-2 gap-4"
+          ></div>
+
+          <div
+            id="feedback-area"
+            class="hidden mt-8 p-6 rounded-2xl text-center text-xl font-medium"
+          ></div>
+        </div>
+      </div>
+
+      <!-- END SCREEN -->
+      <div id="end-screen" class="hidden text-center py-20">
+        <div class="max-w-md mx-auto">
+          <div class="text-8xl mb-6">🎉🌱</div>
+          <h2 class="text-5xl title-font font-bold text-emerald-700 mb-4">
+            Hoàn thành xuất sắc!
+          </h2>
+          <p class="text-3xl text-emerald-600 mb-12">
+            Bạn đã trả lời đúng tất cả 10 câu hỏi về sinh sản vô tính
+          </p>
+
+          <div
+            class="bg-emerald-50 border border-emerald-200 rounded-3xl p-8 mb-12"
+          >
+            <p class="text-4xl font-semibold text-emerald-700 title-font">
+              Cảm ơn đã theo dõi bài thuyết trình của tổ 1!
+            </p>
+            <p class="text-emerald-500 mt-4">
+              Chúc các bạn ôn tập tốt và đạt điểm cao môn Sinh học 11 • Chân
+              trời sáng tạo 🌿
+            </p>
+          </div>
+
+          <div class="flex gap-4 justify-center">
+            <button
+              onclick="restartGame()"
+              class="flex-1 bg-emerald-500 text-white py-6 rounded-3xl text-xl font-semibold flex items-center justify-center gap-3"
+            >
+              <i class="fas fa-redo"></i>
+              CHƠI LẠI TOÀN BỘ
+            </button>
+            <a
+              href="https://www.youtube.com/results?search_query=sinh+h%E1%BB%8Dc+11+ch%C3%A2n+tr%E1%BB%9Di+s%C3%A1ng+t%E1%BA%A1o+b%C3%A0i+24"
+              target="_blank"
+              class="flex-1 border-2 border-emerald-400 text-emerald-600 py-6 rounded-3xl text-xl font-semibold flex items-center justify-center gap-3 hover:bg-emerald-50"
+            >
+              <i class="fas fa-book"></i>
+              XEM LẠI SGK
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLOATING LEAVES -->
+    <div
+      class="absolute bottom-10 left-10 text-4xl leaf-float opacity-30 pointer-events-none"
+    >
+      🍃
+    </div>
+    <div
+      class="absolute bottom-32 right-16 text-4xl leaf-float opacity-30 pointer-events-none"
+      style="animation-delay: 2s"
+    >
+      🌿
+    </div>
+    <div
+      class="absolute top-32 left-1/3 text-4xl leaf-float opacity-30 pointer-events-none"
+      style="animation-delay: 4s"
+    >
+      🪴
+    </div>
+
+    <script>
+      // 10 câu hỏi
+      let quizData = [
+        {
+          question:
+            " Theo sách giáo khoa Sinh học 11 Chân trời sáng tạo, sinh sản vô tính ở thực vật là hình thức sinh sản như thế nào?",
+          options: [
+            "A. Cây con được tạo ra từ sự kết hợp giữa giao tử đực và giao tử cái",
+            "B. Cây con được tạo ra từ các bộ phận sinh dưỡng của cây mẹ hoặc từ bào tử",
+            "C. Chỉ xảy ra ở thực vật có hoa và quả",
+            "D. Luôn tạo ra cây con có bộ gene khác hoàn toàn với cây mẹ",
+          ],
+          correct: 1,
+        },
+        {
+          question: " Hình 24.1 SGK minh họa hình thức sinh sản nào?",
+          options: [
+            "A. Sinh sản bằng bào tử",
+            "B. Sinh sản sinh dưỡng (cây con từ lá, củ, thân, rễ của cây mẹ)",
+            "C. Sinh sản hữu tính bằng hạt",
+            "D. Sinh sản bằng nảy chồi ở động vật",
+          ],
+          correct: 1,
+        },
+        {
+          question:
+            " Ví dụ điển hình của sinh sản sinh dưỡng từ lá được minh họa trong SGK là gì?",
+          options: [
+            "A. Khoai lang nảy mầm từ củ",
+            "B. Cây mọng nước (Kalanchoe) tạo cây con ở mép lá",
+            "C. Mía được giâm cành",
+            "D. Cam được ghép cành",
+          ],
+          correct: 1,
+        },
+        {
+          question:
+            " Hình 24.2 SGK minh họa sinh sản bằng bào tử ở thực vật nào?",
+          options: [
+            "A. Cây ngô",
+            "B. Rêu (chu trình sống của rêu)",
+            "C. Cây lúa",
+            "D. Cây bạch đàn",
+          ],
+          correct: 1,
+        },
+        {
+          question:
+            " Trong chu trình sống của rêu (Hình 24.2), giai đoạn nào là sinh sản vô tính?",
+          options: [
+            "A. Hợp tử phát triển thành thể bào tử",
+            "B. Bào tử (n) nảy mầm thành thể giao tử (n)",
+            "C. Thụ tinh giữa giao tử đực và cái",
+            "D. Thể bào tử tạo túi bào tử",
+          ],
+          correct: 1,
+        },
+        {
+          question: " Lợi ích lớn nhất của sinh sản vô tính ở thực vật là gì?",
+          options: [
+            "A. Tạo ra nhiều biến dị di truyền",
+            "B. Tạo ra cây con giống hệt cây mẹ, giữ nguyên đặc tính tốt trong thời gian ngắn",
+            "C. Phải mất nhiều thời gian hơn sinh sản hữu tính",
+            "D. Chỉ phù hợp với môi trường thay đổi lớn",
+          ],
+          correct: 1,
+        },
+        {
+          question:
+            " Phương pháp nhân giống vô tính nào được dùng phổ biến để nhân nhanh hoa lan và việt quất?",
+          options: [
+            "A. Giâm cành",
+            "B. Chiết cành",
+            "C. Ghép cành",
+            "D. Nuôi cấy mô tế bào",
+          ],
+          correct: 3,
+        },
+        {
+          question:
+            " Phương pháp giâm cành thường được áp dụng cho cây nào trong SGK?",
+          options: [
+            "A. Cam, bưởi",
+            "B. Mía, khoai lang, dâu tằm",
+            "C. Hoa hồng, lan",
+            "D. Khoai tây",
+          ],
+          correct: 1,
+        },
+        {
+          question:
+            " Ý nghĩa quan trọng của sinh sản vô tính trong nông nghiệp là gì?",
+          options: [
+            "A. Tạo giống mới có nhiều đột biến",
+            "B. Nhân nhanh số lượng lớn cây con giữ nguyên đặc tính quý của cây mẹ",
+            "C. Làm giảm năng suất cây trồng",
+            "D. Chỉ dùng được cho thực vật hoang dã",
+          ],
+          correct: 1,
+        },
+        {
+          question:
+            " Sinh sản vô tính ở thực vật khác sinh sản hữu tính ở điểm nào sau đây?",
+          options: [
+            "A. Có sự tham gia của giao tử",
+            "B. Cây con mang bộ gene giống hệt 100% cây mẹ, không có sự biến dị di truyền",
+            "C. Luôn cần thời gian dài hơn",
+            "D. Chỉ xảy ra ở thực vật không có rễ",
+          ],
+          correct: 1,
+        },
+      ];
+
+      let currentQuestionIndex = 0;
+      let isSpinning = false;
+      let rotation = 0;
+      let questionsOrder = [];
+
+      function createBirds() {
+        const container = document.getElementById("birds-container");
+        const birds = ["🐦", "🕊️", "🐦‍⬛", "🐦"];
+        for (let i = 0; i < 12; i++) {
+          const bird = document.createElement("div");
+          bird.className = "bird";
+          bird.textContent = birds[Math.floor(Math.random() * birds.length)];
+          bird.style.top = Math.random() * 70 + 10 + "%";
+          bird.style.animationDuration = 12 + Math.random() * 18 + "s";
+          bird.style.animationDelay = "-" + Math.random() * 20 + "s";
+          bird.style.left = "-120px";
+          container.appendChild(bird);
+          setTimeout(() => {
+            if (bird.parentNode) bird.remove();
+          }, 30000);
+        }
+      }
+
+      let canvas, ctx;
+      function drawWheel() {
+        canvas = document.getElementById("wheel-canvas");
+        ctx = canvas.getContext("2d");
+        const centerX = 160,
+          centerY = 160,
+          radius = 150;
+        const numSegments = 52;
+        const angleStep = (2 * Math.PI) / numSegments;
+        ctx.clearRect(0, 0, 320, 320);
+        for (let i = 0; i < numSegments; i++) {
+          const angle = i * angleStep;
+          ctx.fillStyle = i % 2 === 0 ? "#10b981" : "#34d399";
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY);
+          ctx.arc(centerX, centerY, radius, angle, angle + angleStep);
+          ctx.closePath();
+          ctx.fill();
+          ctx.strokeStyle = "#fff";
+          ctx.lineWidth = 3;
+          ctx.stroke();
+          ctx.save();
+          ctx.translate(centerX, centerY);
+          ctx.rotate(angle + angleStep / 2);
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "bold 13px Inter";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText((i + 1).toString(), radius * 0.7, 0);
+          ctx.restore();
+        }
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 45, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillStyle = "#10b981";
+        ctx.font = "bold 28px Inter";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("52", centerX, centerY);
+      }
+
+      function spinWheel() {
+        if (isSpinning) return;
+        isSpinning = true;
+        const spinBtn = document.getElementById("spin-btn");
+        spinBtn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> ĐANG QUAY...`;
+        spinBtn.disabled = true;
+
+        const randomSpins = 8 + Math.random() * 6;
+        const randomAngle = Math.random() * 360;
+        const totalRotation = randomSpins * 360 + randomAngle;
+        let currentRotation = rotation;
+        const duration = 3200;
+        const startTime = Date.now();
+
+        function animateSpin() {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const easeProgress = 1 - Math.pow(1 - progress, 3);
+          currentRotation = rotation + totalRotation * easeProgress;
+
+          ctx.save();
+          ctx.clearRect(0, 0, 320, 320);
+          ctx.translate(160, 160);
+          ctx.rotate((currentRotation * Math.PI) / 180);
+          ctx.translate(-160, -160);
+
+          const centerX = 160,
+            centerY = 160,
+            radius = 150;
+          const numSegments = 52;
+          const angleStep = (2 * Math.PI) / numSegments;
+          for (let i = 0; i < numSegments; i++) {
+            const angle = i * angleStep;
+            ctx.fillStyle = i % 2 === 0 ? "#10b981" : "#34d399";
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, angle, angle + angleStep);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = "#fff";
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(angle + angleStep / 2);
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 13px Inter";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText((i + 1).toString(), radius * 0.7, 0);
+            ctx.restore();
+          }
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, 45, 0, 2 * Math.PI);
+          ctx.fill();
+          ctx.fillStyle = "#10b981";
+          ctx.font = "bold 28px Inter";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("52", centerX, centerY);
+          ctx.restore();
+
+          if (progress < 1) {
+            requestAnimationFrame(animateSpin);
+          } else {
+            isSpinning = false;
+            rotation = currentRotation % 360;
+            const finalAngle = (360 - (rotation % 360)) % 360;
+            const segmentIndex = Math.floor((finalAngle / 360) * 52);
+            const landedNumber = segmentIndex + 1;
+
+            const resultEl = document.getElementById("wheel-result");
+            resultEl.textContent = landedNumber;
+            resultEl.classList.remove("hidden");
+
+            const goBtn = document.getElementById("go-question-btn");
+            goBtn.classList.remove("hidden");
+            spinBtn.style.display = "none";
+          }
+        }
+        animateSpin();
+      }
+
+      function goToQuestion() {
+        document.getElementById("wheel-section").classList.add("hidden");
+        document.getElementById("question-section").classList.remove("hidden");
+        document.getElementById("wheel-result").classList.add("hidden");
+        const spinBtn = document.getElementById("spin-btn");
+        spinBtn.style.display = "flex";
+        spinBtn.disabled = false;
+        spinBtn.innerHTML = `<i class="fas fa-sync-alt"></i> QUAY NGAY!`;
+        document.getElementById("go-question-btn").classList.add("hidden");
+        loadCurrentQuestion();
+      }
+
+      function loadCurrentQuestion() {
+        const q = quizData[questionsOrder[currentQuestionIndex]];
+        document.getElementById("current-question").innerHTML =
+          `Câu <span class="font-bold">${currentQuestionIndex + 1}</span>`;
+        const progress = (currentQuestionIndex / 10) * 100;
+        document.getElementById("progress-bar").style.width = progress + "%";
+
+        document.getElementById("question-text").innerHTML = `
+                <span class="text-emerald-400 text-xl">CÂU ${currentQuestionIndex + 1}:</span><br>
+                ${q.question}
+            `;
+        const container = document.getElementById("options-container");
+        container.innerHTML = "";
+        q.options.forEach((option, index) => {
+          const div = document.createElement("div");
+          div.className = `option bg-emerald-50 hover:bg-emerald-100 border-2 border-transparent rounded-3xl p-6 text-xl cursor-pointer flex items-center gap-4 text-emerald-800`;
+          div.innerHTML = `
+                    <div class="w-9 h-9 rounded-2xl bg-emerald-200 text-emerald-700 font-bold flex items-center justify-center flex-shrink-0">${String.fromCharCode(65 + index)}</div>
+                    <div>${option}</div>
+                `;
+          div.onclick = () => handleAnswer(index);
+          container.appendChild(div);
+        });
+        document.getElementById("feedback-area").classList.add("hidden");
+      }
+
+      // ==================== PHẦN SỬA THEO YÊU CẦU ====================
+      function handleAnswer(selectedIndex) {
+        const q = quizData[questionsOrder[currentQuestionIndex]];
+        const options = document.querySelectorAll("#options-container > div");
+
+        if (selectedIndex === q.correct) {
+          // ĐÚNG → highlight xanh + feedback + tự động qua câu sau
+          options[selectedIndex].classList.add(
+            "border-emerald-500",
+            "bg-emerald-100",
+            "correct-pop",
+          );
+          const feedback = document.getElementById("feedback-area");
+          feedback.classList.remove("hidden");
+          feedback.innerHTML = `
+                    <span class="text-emerald-500 text-4xl">🎉 ĐÚNG RỒI!</span><br>
+                    <span class="text-emerald-600 mt-3 block">Bạn đã nắm chắc kiến thức sinh sản vô tính 🌱</span>
+                `;
+          setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex >= 10) {
+              finishGame();
+            } else {
+              document
+                .getElementById("question-section")
+                .classList.add("hidden");
+              document
+                .getElementById("wheel-section")
+                .classList.remove("hidden");
+            }
+          }, 1400);
+        } else {
+          // SAI → KHÔNG HIỆN ĐÁP ÁN ĐÚNG, chỉ hiện thông báo ngắn và cho chọn lại
+          options[selectedIndex].classList.add("border-red-400", "bg-red-50");
+
+          const feedback = document.getElementById("feedback-area");
+          feedback.classList.remove("hidden");
+          feedback.innerHTML = `
+                    <span class="text-red-500 text-3xl">❌ Sai rồi!</span><br>
+                    <span class="text-emerald-600 mt-2 block">Hãy chọn lại đáp án khác nhé 🌿</span>
+                `;
+
+          // Sau 1.2 giây tự động ẩn feedback + xóa hiệu ứng đỏ → người chơi tiếp tục chọn
+          setTimeout(() => {
+            options[selectedIndex].classList.remove(
+              "border-red-400",
+              "bg-red-50",
+            );
+            feedback.classList.add("hidden");
+          }, 1200);
+        }
+      }
+
+      function showWheel() {
+        document.getElementById("question-section").classList.add("hidden");
+        document.getElementById("wheel-section").classList.remove("hidden");
+      }
+
+      function startGame() {
+        questionsOrder = [...Array(10).keys()];
+        questionsOrder.sort(() => Math.random() - 0.5);
+        currentQuestionIndex = 0;
+        document.getElementById("start-screen").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+        document.getElementById("wheel-section").classList.remove("hidden");
+        document.getElementById("question-section").classList.add("hidden");
+        setTimeout(() => {
+          drawWheel();
+        }, 300);
+      }
+
+      function finishGame() {
+        document.getElementById("game-screen").classList.add("hidden");
+        document.getElementById("end-screen").classList.remove("hidden");
+        for (let i = 0; i < 8; i++) {
+          setTimeout(() => {
+            const bird = document.createElement("div");
+            bird.className = "bird text-5xl";
+            bird.textContent = "🎉";
+            bird.style.top = "40%";
+            bird.style.animationDuration = "3s";
+            document.getElementById("birds-container").appendChild(bird);
+            setTimeout(() => bird.remove(), 4000);
+          }, i * 80);
+        }
+      }
+
+      function restartGame() {
+        location.reload();
+      }
+
+      function toggleFullscreen() {
+        const btn = document.getElementById("fullscreen-btn");
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().then(() => {
+            btn.innerHTML = `<i class="fas fa-compress"></i>`;
+          });
+        } else {
+          document.exitFullscreen().then(() => {
+            btn.innerHTML = `<i class="fas fa-expand"></i>`;
+          });
+        }
+      }
+
+      // Khởi động
+      window.onload = function () {
+        createBirds();
+        console.log(
+          "%c✅ Trò chơi đã sửa: SAI thì KHÔNG hiện đáp án đúng, tiếp tục chọn lại thoải mái!",
+          "color:#10b981; font-size:18px; font-weight:bold",
+        );
+      };
+    </script>
+  </body>
+</html>
