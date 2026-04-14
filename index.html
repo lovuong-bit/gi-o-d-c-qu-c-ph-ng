@@ -3,806 +3,849 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TRÒ CHƠI SINH HỌC 11 • Phần I: Sinh sản vô tính | Bài 24</title>
+    <title>
+      TRÒ CHƠI HƯỚNG NGHIỆP • Chủ đề 7: Thông tin về các nhóm nghề cơ bản
+    </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
     />
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@700&amp;display=swap");
 
       :root {
-        --primary: #10b981;
+        --tw-color-primary: #00d4ff;
+      }
+
+      * {
+        transition-property:
+          color, background-color, border-color, text-decoration-color, fill,
+          stroke;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 150ms;
       }
 
       body {
+        background: radial-gradient(circle at center, #0a0a0a 0%, #1a1a2e 100%);
         font-family: "Inter", system_ui, sans-serif;
-        background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 100%);
-        overflow: hidden;
       }
 
-      .title-font {
+      .header-font {
         font-family: "Playfair Display", sans-serif;
       }
 
-      .bird {
-        position: absolute;
-        font-size: 28px;
-        z-index: 10;
-        opacity: 0.85;
-        animation: flyAcross linear infinite;
-        filter: drop-shadow(0 4px 6px rgba(16, 185, 129, 0.3));
+      .dark-card {
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(12px);
       }
 
-      @keyframes flyAcross {
+      .question-card {
+        animation: fadeInScale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      @keyframes fadeInScale {
         0% {
-          transform: translateX(-120px) rotate(0deg);
+          opacity: 0;
+          transform: scale(0.95);
         }
         100% {
-          transform: translateX(calc(100vw + 120px)) rotate(25deg);
+          opacity: 1;
+          transform: scale(1);
         }
       }
 
       .wheel-container {
-        animation: wheelPulse 2s ease-in-out infinite;
+        animation: spinWheel 4s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
       }
 
-      @keyframes wheelPulse {
-        0%,
+      .option-btn {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .option-btn::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 40%;
+        height: 300%;
+        background: linear-gradient(
+          120deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        transform: skewX(-25deg);
+        animation: shimmer 4s linear infinite;
+      }
+
+      @keyframes shimmer {
         100% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.05);
+          transform: translateX(200%);
         }
       }
 
-      .question-card {
-        animation: questionPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      .correct {
+        animation: correctPop 0.4s ease;
       }
 
-      @keyframes questionPop {
-        0% {
-          transform: scale(0.8);
-          opacity: 0;
-        }
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
+      .full-screen-btn {
+        animation: pulse 2s infinite;
       }
 
-      .leaf-float {
-        animation: floatLeaf 8s ease-in-out infinite;
-      }
-
-      .fullscreen-btn {
-        transition: all 0.3s ease;
-      }
-      .fullscreen-btn:hover {
-        transform: scale(1.15);
-        color: #10b981;
-      }
-
-      .option {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      .option:hover {
-        transform: translateY(-4px) scale(1.03);
-        box-shadow: 0 20px 25px -5px rgb(16 185 129 / 0.2);
-      }
-
-      .correct-pop {
-        animation: correctAnim 0.4s ease;
-      }
-
-      @keyframes correctAnim {
-        0% {
-          transform: scale(1);
-        }
-        40% {
-          transform: scale(1.15);
-        }
-        100% {
-          transform: scale(1);
-        }
+      .background-grid {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+          linear-gradient(
+            to right,
+            rgba(0, 212, 255, 0.05) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(0, 212, 255, 0.05) 1px,
+            transparent 1px
+          );
+        background-size: 60px 60px;
+        pointer-events: none;
+        z-index: -1;
+        opacity: 0.15;
       }
     </style>
   </head>
-  <body class="min-h-screen relative">
-    <!-- BACKGROUND BIRDS -->
-    <div
-      id="birds-container"
-      class="absolute inset-0 pointer-events-none"
-    ></div>
+  <body class="min-h-screen text-white overflow-x-hidden">
+    <!-- Background grid -->
+    <div class="background-grid"></div>
 
-    <!-- HEADER -->
-    <div
-      class="bg-gradient-to-r from-emerald-400 to-teal-400 text-white shadow-xl sticky top-0 z-50"
+    <!-- Header -->
+    <header
+      class="border-b border-white/10 bg-black/60 backdrop-blur-md sticky top-0 z-50"
     >
       <div
-        class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between"
+        class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"
       >
-        <div class="flex items-center gap-4">
-          <div class="text-4xl">🌱</div>
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-cyan-500/50"
+          >
+            <i class="fa-solid fa-briefcase"></i>
+          </div>
           <div>
-            <h1 class="title-font text-3xl font-bold tracking-tighter">
-              SINH HỌC 11
+            <h1 class="header-font text-3xl font-bold tracking-tighter">
+              HƯỚNG NGHIỆP 11
             </h1>
-            <p class="text-emerald-100 text-sm -mt-1 font-medium">
-              Chân trời sáng tạo • Bài 24
+            <p class="text-cyan-400 text-sm -mt-1">
+              Chủ đề 7 • Thông tin về các nhóm nghề cơ bản
             </p>
           </div>
-          <div
-            class="px-5 py-1 bg-white/20 backdrop-blur-md rounded-3xl text-sm font-semibold flex items-center gap-2"
-          >
-            <i class="fas fa-leaf"></i>
-            PHẦN I: SINH SẢN VÔ TÍNH
-          </div>
         </div>
 
-        <div class="text-center">
-          <div class="text-2xl font-bold title-font tracking-tighter">
-            TRÒ CHƠI ÔN TẬP
+        <div class="flex items-center gap-6">
+          <!-- Progress -->
+          <div id="progress-container" class="hidden items-center gap-3">
+            <div class="text-sm font-medium text-cyan-400">
+              Câu
+              <span id="current-q" class="text-2xl font-bold text-white">1</span
+              >/20
+            </div>
+            <div class="h-2 w-64 bg-white/10 rounded-3xl overflow-hidden">
+              <div
+                id="progress-bar"
+                class="h-full bg-gradient-to-r from-cyan-400 to-blue-500 w-1/20 rounded-3xl"
+              ></div>
+            </div>
           </div>
-          <p class="text-emerald-100 text-xs">10 câu hỏi</p>
-        </div>
 
-        <div class="flex items-center gap-4">
-          <!-- NÚT TOÀN MÀN HÌNH -->
+          <!-- Full screen -->
           <button
-            onclick="toggleFullscreen()"
-            id="fullscreen-btn"
-            class="fullscreen-btn flex items-center justify-center w-10 h-10 bg-white/20 hover:bg-white/30 rounded-2xl text-2xl transition-all"
+            onclick="toggleFullScreen()"
+            class="full-screen-btn flex items-center justify-center w-10 h-10 bg-white/10 hover:bg-white/20 rounded-2xl text-xl backdrop-blur-md border border-white/10"
           >
-            <i class="fas fa-expand"></i>
+            <i class="fa-solid fa-expand"></i>
           </button>
 
-          <div class="flex items-center bg-white/20 px-4 h-9 rounded-3xl gap-2">
-            <span class="relative flex h-3 w-3">
-              <span
-                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"
-              ></span>
-              <span
-                class="relative inline-flex rounded-full h-3 w-3 bg-white"
-              ></span>
-            </span>
-            SGK CHÂN TRỜI SÁNG TẠO
-          </div>
-          <button
-            onclick="restartGame()"
-            class="flex items-center gap-2 bg-white text-emerald-600 px-6 py-2 rounded-3xl font-semibold hover:shadow-lg"
+          <div
+            class="text-xs uppercase tracking-[2px] font-medium px-4 py-2 bg-white/10 rounded-3xl flex items-center gap-2"
           >
-            <i class="fas fa-redo"></i>
-            CHƠI LẠI
+            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            SÁCH CHÂN TRỜI SÁNG TẠO • LỚP 11
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 py-12">
+      <!-- START SCREEN -->
+      <div id="start-screen" class="text-center py-20">
+        <div
+          class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-cyan-400/10 to-blue-600/10 rounded-3xl mb-8 border border-cyan-400/30"
+        >
+          <i class="fa-solid fa-gamepad text-6xl text-cyan-400"></i>
+        </div>
+        <h1
+          class="header-font text-6xl font-bold mb-4 tracking-tighter leading-none"
+        >
+          TRÒ CHƠI ÔN TẬP<br />CHỦ ĐỀ 7
+        </h1>
+        <p class="text-2xl text-cyan-300 mb-8">
+          Hoạt động trải nghiệm Hướng nghiệp • Lớp 11
+        </p>
+        <p class="max-w-md mx-auto text-lg text-slate-400 mb-12">
+          Tổng hợp kiến thức về các nhóm nghề cơ bản.<br />
+          Không tính điểm • Không giới hạn thời gian • Chỉ cần chọn đúng để tiếp
+          tục!
+        </p>
+
+        <button
+          onclick="startGame()"
+          class="group relative inline-flex items-center gap-4 bg-gradient-to-r from-cyan-400 to-blue-600 text-black font-semibold text-2xl px-12 py-6 rounded-3xl hover:scale-105 active:scale-95 shadow-2xl shadow-cyan-500/50"
+        >
+          <span>BẮT ĐẦU TRÒ CHƠI</span>
+          <i class="fa-solid fa-arrow-right group-active:translate-x-1"></i>
+        </button>
+
+        <div class="mt-16 flex justify-center gap-8 text-slate-400">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i> 20 câu hỏi trắc nghiệm
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i> Hiệu ứng động đẹp mắt
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i> Vòng quay ngẫu nhiên 1-52
+          </div>
+        </div>
+      </div>
+
+      <!-- WHEEL SCREEN -->
+      <div id="wheel-screen" class="hidden">
+        <div class="dark-card rounded-3xl p-10 text-center max-w-2xl mx-auto">
+          <h2 class="text-3xl font-semibold mb-8 text-cyan-300">
+            Trước khi vào câu hỏi...
+          </h2>
+          <p class="text-slate-400 mb-10">
+            Quay vòng số ngẫu nhiên từ 1 đến 52 để chọn năng lượng may mắn cho
+            câu hỏi tiếp theo!
+          </p>
+
+          <!-- Wheel -->
+          <div class="relative mx-auto w-80 h-80 mb-10">
+            <div
+              id="wheel"
+              class="wheel-container absolute inset-0 rounded-full border-8 border-cyan-400 shadow-2xl shadow-cyan-500/50 overflow-hidden"
+              style="
+                background: conic-gradient(
+                  #22d3ee 0deg 30deg,
+                  #67e8f9 30deg 60deg,
+                  #a5f4ff 60deg 90deg,
+                  #22d3ee 90deg 120deg,
+                  #67e8f9 120deg 150deg,
+                  #a5f4ff 150deg 180deg,
+                  #22d3ee 180deg 210deg,
+                  #67e8f9 210deg 240deg,
+                  #a5f4ff 240deg 270deg,
+                  #22d3ee 270deg 300deg,
+                  #67e8f9 300deg 330deg,
+                  #a5f4ff 330deg 360deg
+                );
+              "
+            >
+              <!-- Labels on wheel -->
+              <div
+                class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-black rotate-12"
+                style="transform: rotate(15deg)"
+              >
+                01
+              </div>
+              <div
+                class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-black rotate-12"
+                style="transform: rotate(45deg)"
+              >
+                10
+              </div>
+              <div
+                class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-black rotate-12"
+                style="transform: rotate(75deg)"
+              >
+                20
+              </div>
+              <div
+                class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-black rotate-12"
+                style="transform: rotate(105deg)"
+              >
+                30
+              </div>
+              <div
+                class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-black rotate-12"
+                style="transform: rotate(135deg)"
+              >
+                40
+              </div>
+              <div
+                class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-black rotate-12"
+                style="transform: rotate(165deg)"
+              >
+                50
+              </div>
+              <div
+                class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-black -rotate-12"
+                style="transform: rotate(-15deg)"
+              >
+                52
+              </div>
+
+              <!-- Center pin -->
+              <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-black rounded-full border-4 border-cyan-400 flex items-center justify-center z-10 shadow-xl"
+              >
+                <i
+                  class="fa-solid fa-arrow-down text-4xl text-cyan-400 rotate-180"
+                ></i>
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="lucky-number"
+            class="text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-8 hidden"
+          >
+            88
+          </div>
+
+          <button
+            onclick="confirmWheel()"
+            class="px-16 py-5 bg-white text-black rounded-3xl text-2xl font-semibold flex items-center gap-3 mx-auto hover:shadow-2xl"
+          >
+            <i class="fa-solid fa-dice"></i>
+            <span>CLICK VÀO CÂU HỎI</span>
           </button>
         </div>
       </div>
-    </div>
 
-    <div class="max-w-5xl mx-auto px-6 pt-8 pb-12 relative z-20">
-      <!-- START SCREEN -->
-      <div id="start-screen">
-        <div class="text-center py-16">
-          <div
-            class="inline-flex items-center gap-3 bg-white shadow-xl rounded-3xl px-8 py-4 mb-8 text-emerald-600"
-          >
-            <i class="fas fa-gamepad text-4xl"></i>
-            <span class="text-3xl font-bold title-font"
-              >TRÒ CHƠI SINH SẢN VÔ TÍNH</span
+      <!-- QUESTION SCREEN -->
+      <div id="question-screen" class="hidden">
+        <div class="dark-card rounded-3xl p-10 question-card">
+          <div class="flex justify-between items-start mb-8">
+            <div id="q-number" class="text-5xl font-bold text-cyan-400"></div>
+            <button
+              onclick="exitToStart()"
+              class="text-slate-400 hover:text-white text-sm flex items-center gap-2"
             >
+              <i class="fa-solid fa-xmark"></i> THOÁT
+            </button>
           </div>
 
           <h2
-            class="text-6xl title-font font-bold text-emerald-800 leading-none mb-4"
-          >
-            Phần I • Bài 24
-          </h2>
-          <p class="text-2xl text-emerald-600 mb-10">
-            Sinh sản ở thực vật • Sách giáo khoa Sinh học 11 Chân trời sáng tạo
-          </p>
+            id="question-text"
+            class="text-2xl leading-tight font-medium mb-12"
+          ></h2>
 
-          <div class="flex justify-center gap-8 mb-12">
-            <div class="text-center">
-              <div class="text-7xl mb-2">🌱</div>
-              <div class="font-semibold">Sinh sản sinh dưỡng</div>
-              <div class="text-xs text-emerald-500">Hình 24.1 SGK</div>
-            </div>
-            <div class="text-center">
-              <div class="text-7xl mb-2">🧬</div>
-              <div class="font-semibold">Sinh sản bằng bào tử</div>
-              <div class="text-xs text-emerald-500">Hình 24.2 SGK</div>
-            </div>
-          </div>
-
-          <button
-            onclick="startGame()"
-            class="bg-emerald-500 hover:bg-emerald-600 text-white text-2xl font-semibold px-14 py-6 rounded-3xl shadow-2xl shadow-emerald-500/40 flex items-center gap-4 mx-auto"
-          >
-            <span>BẮT ĐẦU TRÒ CHƠI NGAY!</span>
-            <i class="fas fa-arrow-right text-3xl"></i>
-          </button>
-
-          <p class="text-emerald-500 mt-8 text-sm">
-            KHÔ GÀ /// BÃ MÍA /// ĐỘ MIXI
-          </p>
+          <div id="options" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
       </div>
 
-      <!-- GAME SCREEN -->
-      <div id="game-screen" class="hidden">
-        <!-- PROGRESS -->
-        <div class="flex items-center justify-between mb-8 px-4">
-          <div class="text-emerald-700 font-medium flex items-center gap-2">
-            <span id="current-question">Câu 1</span>
-            <span class="text-emerald-400">/ 10</span>
-          </div>
-          <div class="h-3 w-72 bg-emerald-100 rounded-3xl overflow-hidden">
-            <div
-              id="progress-bar"
-              class="h-3 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-3xl w-1/10"
-            ></div>
-          </div>
-          <div
-            onclick="showWheel()"
-            class="cursor-pointer flex items-center gap-2 text-emerald-600 hover:text-emerald-700"
-          >
-            <i class="fas fa-sync-alt"></i>
-            <span class="font-semibold">Quay số may mắn</span>
-          </div>
-        </div>
-
-        <!-- WHEEL SECTION -->
+      <!-- SUCCESS MODAL -->
+      <div
+        id="success-modal"
+        onclick="if (event.target.id === 'success-modal') hideSuccess();"
+        class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center"
+      >
         <div
-          id="wheel-section"
-          class="bg-white rounded-3xl shadow-2xl p-8 mb-8"
+          onclick="event.stopImmediatePropagation()"
+          class="dark-card rounded-3xl p-12 max-w-md text-center"
         >
-          <div class="text-center mb-6">
-            <h3 class="text-2xl font-semibold text-emerald-700 mb-1">
-              🎡 VÒNG QUAY MAY MẮN 1 - 52
-            </h3>
-            <p class="text-emerald-500 text-sm">
-              Quay để chọn số ngẫu nhiên rồi click vào câu hỏi!
-            </p>
-          </div>
+          <div class="text-8xl mb-6">🎉</div>
+          <h3 class="text-4xl font-bold text-cyan-400 mb-2">ĐÚNG RỒI!</h3>
+          <p id="success-text" class="text-slate-300 mb-10">
+            Bạn đã chọn đúng đáp án. Chuẩn bị quay vòng cho câu tiếp theo nhé!
+          </p>
 
-          <div
-            class="wheel-container mx-auto flex justify-center relative"
-            style="width: 320px; height: 320px"
+          <button
+            onclick="nextQuestion()"
+            class="w-full py-6 bg-gradient-to-r from-cyan-400 to-blue-600 text-black font-bold text-2xl rounded-3xl flex items-center justify-center gap-4"
           >
-            <canvas
-              id="wheel-canvas"
-              width="320"
-              height="320"
-              class="rounded-full shadow-xl"
-            ></canvas>
-            <div
-              class="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-b-[30px] border-b-red-500 z-10"
-            ></div>
-            <div
-              id="wheel-result"
-              class="absolute inset-0 flex items-center justify-center text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-emerald-400 to-teal-400 pointer-events-none hidden"
-            ></div>
-          </div>
-
-          <div class="flex justify-center gap-6 mt-8">
-            <button
-              onclick="spinWheel()"
-              id="spin-btn"
-              class="bg-emerald-500 hover:bg-emerald-600 text-white px-10 py-4 rounded-3xl text-xl font-semibold flex items-center gap-3 shadow-lg"
-            >
-              <i class="fas fa-sync-alt"></i>
-              QUAY NGAY!
-            </button>
-
-            <button
-              onclick="goToQuestion()"
-              id="go-question-btn"
-              class="hidden bg-gradient-to-r from-teal-400 to-emerald-500 text-white px-10 py-4 rounded-3xl text-xl font-semibold flex items-center gap-3"
-            >
-              <i class="fas fa-arrow-right"></i>
-              CLICK VÀO CÂU HỎI
-            </button>
-          </div>
-        </div>
-
-        <!-- QUESTION SECTION -->
-        <div
-          id="question-section"
-          class="hidden bg-white rounded-3xl shadow-2xl p-8 question-card"
-        >
-          <div
-            id="question-text"
-            class="text-2xl font-semibold text-emerald-800 mb-8 leading-tight"
-          ></div>
-
-          <div
-            id="options-container"
-            class="grid grid-cols-1 md:grid-cols-2 gap-4"
-          ></div>
-
-          <div
-            id="feedback-area"
-            class="hidden mt-8 p-6 rounded-2xl text-center text-xl font-medium"
-          ></div>
+            TIẾP TỤC CÂU HỎI
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
         </div>
       </div>
 
       <!-- END SCREEN -->
       <div id="end-screen" class="hidden text-center py-20">
-        <div class="max-w-md mx-auto">
-          <div class="text-8xl mb-6">🎉🌱</div>
-          <h2 class="text-5xl title-font font-bold text-emerald-700 mb-4">
-            Hoàn thành xuất sắc!
-          </h2>
-          <p class="text-3xl text-emerald-600 mb-12">
-            Bạn đã trả lời đúng tất cả 10 câu hỏi về sinh sản vô tính
-          </p>
+        <div
+          class="mx-auto w-28 h-28 bg-gradient-to-br from-emerald-400 to-cyan-400 rounded-3xl flex items-center justify-center mb-10 shadow-2xl shadow-emerald-500/40 text-6xl"
+        >
+          🙏
+        </div>
+        <h1 class="header-font text-6xl font-bold mb-6">CẢM ƠN ĐÃ THEO DÕI</h1>
+        <h2 class="text-4xl text-cyan-300 mb-8">Bài thuyết trình của tổ</h2>
+        <p class="max-w-lg mx-auto text-xl text-slate-400 mb-16">
+          Chúc các bạn lớp 11 luôn thành công trên con đường lựa chọn nghề
+          nghiệp tương lai!<br />
+          Hướng nghiệp – Chân trời sáng tạo!
+        </p>
 
-          <div
-            class="bg-emerald-50 border border-emerald-200 rounded-3xl p-8 mb-12"
+        <div class="flex flex-wrap gap-6 justify-center">
+          <button
+            onclick="restartGame()"
+            class="px-10 py-5 bg-white/10 hover:bg-white/20 border border-white/30 rounded-3xl text-xl flex items-center gap-3"
           >
-            <p class="text-4xl font-semibold text-emerald-700 title-font">
-              Cảm ơn đã theo dõi bài thuyết trình của tổ 1!
-            </p>
-            <p class="text-emerald-500 mt-4">
-              Chúc các bạn ôn tập tốt và đạt điểm cao môn Sinh học 11 • Chân
-              trời sáng tạo 🌿
-            </p>
-          </div>
+            <i class="fa-solid fa-rotate-right"></i>
+            CHƠI LẠI TỪ ĐẦU
+          </button>
+          <a
+            href="javascript:window.close()"
+            class="px-10 py-5 bg-white text-black rounded-3xl text-xl flex items-center gap-3"
+          >
+            <i class="fa-solid fa-door-open"></i>
+            THOÁT TRANG
+          </a>
+        </div>
 
-          <div class="flex gap-4 justify-center">
-            <button
-              onclick="restartGame()"
-              class="flex-1 bg-emerald-500 text-white py-6 rounded-3xl text-xl font-semibold flex items-center justify-center gap-3"
-            >
-              <i class="fas fa-redo"></i>
-              CHƠI LẠI TOÀN BỘ
-            </button>
-            <a
-              href="https://www.youtube.com/results?search_query=sinh+h%E1%BB%8Dc+11+ch%C3%A2n+tr%E1%BB%9Di+s%C3%A1ng+t%E1%BA%A1o+b%C3%A0i+24"
-              target="_blank"
-              class="flex-1 border-2 border-emerald-400 text-emerald-600 py-6 rounded-3xl text-xl font-semibold flex items-center justify-center gap-3 hover:bg-emerald-50"
-            >
-              <i class="fas fa-book"></i>
-              XEM LẠI SGK
-            </a>
-          </div>
+        <div class="mt-20 text-xs text-slate-500">
+          Được thiết kế đặc biệt cho bài thuyết trình Hướng nghiệp • Chủ đề 7
         </div>
       </div>
-    </div>
-
-    <!-- FLOATING LEAVES -->
-    <div
-      class="absolute bottom-10 left-10 text-4xl leaf-float opacity-30 pointer-events-none"
-    >
-      🍃
-    </div>
-    <div
-      class="absolute bottom-32 right-16 text-4xl leaf-float opacity-30 pointer-events-none"
-      style="animation-delay: 2s"
-    >
-      🌿
-    </div>
-    <div
-      class="absolute top-32 left-1/3 text-4xl leaf-float opacity-30 pointer-events-none"
-      style="animation-delay: 4s"
-    >
-      🪴
-    </div>
+    </main>
 
     <script>
-      // 10 câu hỏi
-      let quizData = [
+      // Tailwind script
+      function initializeTailwind() {
+        tailwind.config = {
+          content: [],
+          theme: {
+            extend: {},
+          },
+        };
+      }
+
+      // 20 câu hỏi theo thứ tự đáp án ACBDACCDBAACDBABDCBA
+      const questions = [
         {
-          question:
-            " Theo sách giáo khoa Sinh học 11 Chân trời sáng tạo, sinh sản vô tính ở thực vật là hình thức sinh sản như thế nào?",
-          options: [
-            "A. Cây con được tạo ra từ sự kết hợp giữa giao tử đực và giao tử cái",
-            "B. Cây con được tạo ra từ các bộ phận sinh dưỡng của cây mẹ hoặc từ bào tử",
-            "C. Chỉ xảy ra ở thực vật có hoa và quả",
-            "D. Luôn tạo ra cây con có bộ gene khác hoàn toàn với cây mẹ",
-          ],
-          correct: 1,
+          number: 1,
+          q: "Cách phân loại nhóm nghề cơ bản trong sách giáo khoa Chân trời sáng tạo là dựa vào gì?",
+          a: "Danh mục nghề nghiệp Việt Nam",
+          b: "Phân loại theo sở thích cá nhân",
+          c: "Theo mức lương trung bình",
+          d: "Theo địa điểm làm việc",
+          correct: "A",
         },
         {
-          question: " Hình 24.1 SGK minh họa hình thức sinh sản nào?",
-          options: [
-            "A. Sinh sản bằng bào tử",
-            "B. Sinh sản sinh dưỡng (cây con từ lá, củ, thân, rễ của cây mẹ)",
-            "C. Sinh sản hữu tính bằng hạt",
-            "D. Sinh sản bằng nảy chồi ở động vật",
-          ],
-          correct: 1,
+          number: 2,
+          q: "Hoạt động đặc trưng của nhóm nghề dịch vụ bán hàng là gì?",
+          a: "Lập trình phần mềm hệ thống",
+          b: "Quản lý tài chính doanh nghiệp",
+          c: "Trao đổi trực tiếp với khách hàng để cung cấp, tư vấn thông tin sản phẩm, dịch vụ",
+          d: "Phóng sự, viết bài báo chí",
+          correct: "C",
         },
         {
-          question:
-            " Ví dụ điển hình của sinh sản sinh dưỡng từ lá được minh họa trong SGK là gì?",
-          options: [
-            "A. Khoai lang nảy mầm từ củ",
-            "B. Cây mọng nước (Kalanchoe) tạo cây con ở mép lá",
-            "C. Mía được giâm cành",
-            "D. Cam được ghép cành",
-          ],
-          correct: 1,
+          number: 3,
+          q: "Người làm nghề nhà báo cần đáp ứng năng lực nào sau đây?",
+          a: "Kiến thức chuyên sâu về kế toán thuế",
+          b: "Năng lực ngôn ngữ và công nghệ thông tin",
+          c: "Kỹ năng lái xe chuyên nghiệp",
+          d: "Thiết kế đồ họa 3D",
+          correct: "B",
         },
         {
-          question:
-            " Hình 24.2 SGK minh họa sinh sản bằng bào tử ở thực vật nào?",
-          options: [
-            "A. Cây ngô",
-            "B. Rêu (chu trình sống của rêu)",
-            "C. Cây lúa",
-            "D. Cây bạch đàn",
-          ],
-          correct: 1,
+          number: 4,
+          q: "Yêu cầu năng lực chính của người làm ngành nghề IT là?",
+          a: "Giao tiếp bán hàng tốt",
+          b: "Phân tích báo cáo tài chính",
+          c: "Viết bài báo chí chuyên sâu",
+          d: "Kiến thức lập trình, phát triển phần mềm, an ninh thông tin, big data, AI",
+          correct: "D",
         },
         {
-          question:
-            " Trong chu trình sống của rêu (Hình 24.2), giai đoạn nào là sinh sản vô tính?",
-          options: [
-            "A. Hợp tử phát triển thành thể bào tử",
-            "B. Bào tử (n) nảy mầm thành thể giao tử (n)",
-            "C. Thụ tinh giữa giao tử đực và cái",
-            "D. Thể bào tử tạo túi bào tử",
-          ],
-          correct: 1,
+          number: 5,
+          q: "Người làm kế toán cần có kiến thức chuyên môn về lĩnh vực nào?",
+          a: "Kế toán, thuế, tài chính",
+          b: "Lập trình website",
+          c: "Tư vấn tâm lý khách hàng",
+          d: "Quản lý chuỗi cung ứng",
+          correct: "A",
         },
         {
-          question: " Lợi ích lớn nhất của sinh sản vô tính ở thực vật là gì?",
-          options: [
-            "A. Tạo ra nhiều biến dị di truyền",
-            "B. Tạo ra cây con giống hệt cây mẹ, giữ nguyên đặc tính tốt trong thời gian ngắn",
-            "C. Phải mất nhiều thời gian hơn sinh sản hữu tính",
-            "D. Chỉ phù hợp với môi trường thay đổi lớn",
-          ],
-          correct: 1,
+          number: 6,
+          q: "Những việc cần làm để đảm bảo an toàn và sức khỏe nghề nghiệp cho người lao động bao gồm?",
+          a: "Chỉ khám sức khỏe định kỳ",
+          b: "Chỉ trang bị bảo hộ lao động",
+          c: "Trang bị bảo hộ, tập huấn an toàn, phổ biến rủi ro và thăm khám định kỳ",
+          d: "Chỉ tổ chức teambuilding",
+          correct: "C",
         },
         {
-          question:
-            " Phương pháp nhân giống vô tính nào được dùng phổ biến để nhân nhanh hoa lan và việt quất?",
-          options: [
-            "A. Giâm cành",
-            "B. Chiết cành",
-            "C. Ghép cành",
-            "D. Nuôi cấy mô tế bào",
-          ],
-          correct: 3,
+          number: 7,
+          q: "Ý nghĩa quan trọng nhất của việc đảm bảo an toàn và sức khỏe nghề nghiệp là gì?",
+          a: "Chỉ nâng cao năng suất lao động",
+          b: "Chỉ đảm bảo sức khỏe cá nhân",
+          c: "Nâng cao năng suất, đảm bảo hiệu quả công việc và sức khỏe người lao động",
+          d: "Giảm chi phí cho doanh nghiệp",
+          correct: "C",
         },
         {
-          question:
-            " Phương pháp giâm cành thường được áp dụng cho cây nào trong SGK?",
-          options: [
-            "A. Cam, bưởi",
-            "B. Mía, khoai lang, dâu tằm",
-            "C. Hoa hồng, lan",
-            "D. Khoai tây",
-          ],
-          correct: 1,
+          number: 8,
+          q: "Có bao nhiêu nguồn thu thập thông tin về xu hướng phát triển nghề trong xã hội và thị trường lao động?",
+          a: "2 nguồn",
+          b: "3 nguồn",
+          c: "4 nguồn",
+          d: "5 nguồn (trung tâm hướng nghiệp, giới thiệu việc làm, thảo luận, báo chí, website)",
+          correct: "D",
         },
         {
-          question:
-            " Ý nghĩa quan trọng của sinh sản vô tính trong nông nghiệp là gì?",
-          options: [
-            "A. Tạo giống mới có nhiều đột biến",
-            "B. Nhân nhanh số lượng lớn cây con giữ nguyên đặc tính quý của cây mẹ",
-            "C. Làm giảm năng suất cây trồng",
-            "D. Chỉ dùng được cho thực vật hoang dã",
-          ],
-          correct: 1,
+          number: 9,
+          q: "Phẩm chất cần thiết cho nghề kế toán là?",
+          a: "Sáng tạo và linh hoạt",
+          b: "Cẩn thận, tỉ mỉ, chính xác",
+          c: "Giao tiếp mạnh mẽ với khách hàng",
+          d: "Thể lực dồi dào",
+          correct: "B",
         },
         {
-          question:
-            " Sinh sản vô tính ở thực vật khác sinh sản hữu tính ở điểm nào sau đây?",
-          options: [
-            "A. Có sự tham gia của giao tử",
-            "B. Cây con mang bộ gene giống hệt 100% cây mẹ, không có sự biến dị di truyền",
-            "C. Luôn cần thời gian dài hơn",
-            "D. Chỉ xảy ra ở thực vật không có rễ",
-          ],
-          correct: 1,
+          number: 10,
+          q: "Thông tin cần thu thập khi tìm hiểu một ngành nghề bao gồm?",
+          a: "Nhóm nghề, đặc trưng, yêu cầu phẩm chất - năng lực và kế hoạch rèn luyện",
+          b: "Chỉ thông tin lương thưởng",
+          c: "Chỉ địa điểm làm việc",
+          d: "Chỉ thời gian làm việc",
+          correct: "A",
+        },
+        {
+          number: 11,
+          q: "Tại sao phải quy định lái xe ô tô không được lái liên tục quá 4 giờ?",
+          a: "Để tránh mệt mỏi, giảm tập trung và nguy hiểm cho giao thông",
+          b: "Để tiết kiệm nhiên liệu",
+          c: "Để tăng lương cho tài xế",
+          d: "Để kiểm tra thiết bị xe",
+          correct: "A",
+        },
+        {
+          number: 12,
+          q: "Mục đích của việc khám sức khỏe định kỳ cho người lao động là gì?",
+          a: "Kiểm tra kỷ luật lao động",
+          b: "Tăng doanh thu cho bệnh viện",
+          c: "Phát hiện sớm vấn đề sức khỏe, phòng ngừa bệnh nghề nghiệp",
+          d: "Đánh giá hiệu suất làm việc",
+          correct: "C",
+        },
+        {
+          number: 13,
+          q: "Biện pháp kỹ thuật phòng bệnh nghề nghiệp bao gồm?",
+          a: "Xây dựng nội quy an toàn",
+          b: "Tổ chức teambuilding",
+          c: "Khám sức khỏe tuyển dụng",
+          d: "Thay đổi quy trình công nghệ sạch, thân thiện với môi trường",
+          correct: "D",
+        },
+        {
+          number: 14,
+          q: "Biện pháp hành chính - tổ chức phòng bệnh nghề nghiệp là?",
+          a: "Trang bị thiết bị bảo hộ cá nhân",
+          b: "Xây dựng nội quy an toàn, tổ chức thời gian làm việc - nghỉ ngơi hợp lý",
+          c: "Thay đổi máy móc sản xuất",
+          d: "Tuyên truyền qua báo chí",
+          correct: "B",
+        },
+        {
+          number: 15,
+          q: "Cách thu thập thông tin yêu cầu của nhà tuyển dụng về phẩm chất và năng lực là?",
+          a: "Phỏng vấn trực tiếp hoặc đọc thông tin tuyển dụng, tham gia ngày hội việc làm",
+          b: "Xem video quảng cáo",
+          c: "Hỏi bạn bè trên mạng xã hội",
+          d: "Đọc tiểu thuyết",
+          correct: "A",
+        },
+        {
+          number: 16,
+          q: "Đặc điểm môi trường làm việc của nhóm nghề dịch vụ bán hàng?",
+          a: "Môi trường bụi bặm, nguy hiểm cao",
+          b: "Môi trường sạch sẽ, an toàn, tôn trọng và cởi mở với khách hàng",
+          c: "Làm việc trong phòng kín không có ánh sáng",
+          d: "Làm việc ngoài trời 24/7",
+          correct: "B",
+        },
+        {
+          number: 17,
+          q: "Nguồn thu thập thông tin xu hướng phát triển nghề bao gồm?",
+          a: "Chỉ website trực tuyến",
+          b: "Chỉ báo chí",
+          c: "Chỉ trung tâm giới thiệu việc làm",
+          d: "Trung tâm hướng nghiệp, giới thiệu việc làm, thảo luận, báo chí, website",
+          correct: "D",
+        },
+        {
+          number: 18,
+          q: "Tập thông tin nghề mà em quan tâm nên được cập nhật như thế nào?",
+          a: "Hàng ngày",
+          b: "Một lần duy nhất",
+          c: "Theo từng học kỳ hoặc năm học",
+          d: "Không cần cập nhật",
+          correct: "C",
+        },
+        {
+          number: 19,
+          q: "Để rèn luyện bản thân phù hợp với nghề đã chọn, em cần?",
+          a: "Chỉ học lý thuyết trên lớp",
+          b: "Tham gia trải nghiệm nghề, lập kế hoạch rèn luyện cụ thể",
+          c: "Chờ công ty tuyển dụng",
+          d: "Không cần rèn luyện gì thêm",
+          correct: "B",
+        },
+        {
+          number: 20,
+          q: "Ý nghĩa của việc đảm bảo an toàn và sức khỏe nghề nghiệp đối với người lao động là?",
+          a: "Nâng cao năng suất lao động, đảm bảo sức khỏe và hiệu quả công việc",
+          b: "Chỉ giúp giảm giờ làm",
+          c: "Chỉ tăng lương thưởng",
+          d: "Chỉ thay đổi nghề nghiệp",
+          correct: "A",
         },
       ];
 
-      let currentQuestionIndex = 0;
-      let isSpinning = false;
-      let rotation = 0;
-      let questionsOrder = [];
+      let currentIndex = 0;
+      let wheelSpinning = false;
 
-      function createBirds() {
-        const container = document.getElementById("birds-container");
-        const birds = ["🐦", "🕊️", "🐦‍⬛", "🐦"];
-        for (let i = 0; i < 12; i++) {
-          const bird = document.createElement("div");
-          bird.className = "bird";
-          bird.textContent = birds[Math.floor(Math.random() * birds.length)];
-          bird.style.top = Math.random() * 70 + 10 + "%";
-          bird.style.animationDuration = 12 + Math.random() * 18 + "s";
-          bird.style.animationDelay = "-" + Math.random() * 20 + "s";
-          bird.style.left = "-120px";
-          container.appendChild(bird);
-          setTimeout(() => {
-            if (bird.parentNode) bird.remove();
-          }, 30000);
-        }
-      }
-
-      let canvas, ctx;
-      function drawWheel() {
-        canvas = document.getElementById("wheel-canvas");
-        ctx = canvas.getContext("2d");
-        const centerX = 160,
-          centerY = 160,
-          radius = 150;
-        const numSegments = 52;
-        const angleStep = (2 * Math.PI) / numSegments;
-        ctx.clearRect(0, 0, 320, 320);
-        for (let i = 0; i < numSegments; i++) {
-          const angle = i * angleStep;
-          ctx.fillStyle = i % 2 === 0 ? "#10b981" : "#34d399";
-          ctx.beginPath();
-          ctx.moveTo(centerX, centerY);
-          ctx.arc(centerX, centerY, radius, angle, angle + angleStep);
-          ctx.closePath();
-          ctx.fill();
-          ctx.strokeStyle = "#fff";
-          ctx.lineWidth = 3;
-          ctx.stroke();
-          ctx.save();
-          ctx.translate(centerX, centerY);
-          ctx.rotate(angle + angleStep / 2);
-          ctx.fillStyle = "#ffffff";
-          ctx.font = "bold 13px Inter";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText((i + 1).toString(), radius * 0.7, 0);
-          ctx.restore();
-        }
-        ctx.fillStyle = "#ffffff";
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, 45, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.fillStyle = "#10b981";
-        ctx.font = "bold 28px Inter";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("52", centerX, centerY);
-      }
-
-      function spinWheel() {
-        if (isSpinning) return;
-        isSpinning = true;
-        const spinBtn = document.getElementById("spin-btn");
-        spinBtn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> ĐANG QUAY...`;
-        spinBtn.disabled = true;
-
-        const randomSpins = 8 + Math.random() * 6;
-        const randomAngle = Math.random() * 360;
-        const totalRotation = randomSpins * 360 + randomAngle;
-        let currentRotation = rotation;
-        const duration = 3200;
-        const startTime = Date.now();
-
-        function animateSpin() {
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          const easeProgress = 1 - Math.pow(1 - progress, 3);
-          currentRotation = rotation + totalRotation * easeProgress;
-
-          ctx.save();
-          ctx.clearRect(0, 0, 320, 320);
-          ctx.translate(160, 160);
-          ctx.rotate((currentRotation * Math.PI) / 180);
-          ctx.translate(-160, -160);
-
-          const centerX = 160,
-            centerY = 160,
-            radius = 150;
-          const numSegments = 52;
-          const angleStep = (2 * Math.PI) / numSegments;
-          for (let i = 0; i < numSegments; i++) {
-            const angle = i * angleStep;
-            ctx.fillStyle = i % 2 === 0 ? "#10b981" : "#34d399";
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.arc(centerX, centerY, radius, angle, angle + angleStep);
-            ctx.closePath();
-            ctx.fill();
-            ctx.strokeStyle = "#fff";
-            ctx.lineWidth = 3;
-            ctx.stroke();
-            ctx.save();
-            ctx.translate(centerX, centerY);
-            ctx.rotate(angle + angleStep / 2);
-            ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 13px Inter";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillText((i + 1).toString(), radius * 0.7, 0);
-            ctx.restore();
-          }
-          ctx.fillStyle = "#ffffff";
-          ctx.beginPath();
-          ctx.arc(centerX, centerY, 45, 0, 2 * Math.PI);
-          ctx.fill();
-          ctx.fillStyle = "#10b981";
-          ctx.font = "bold 28px Inter";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText("52", centerX, centerY);
-          ctx.restore();
-
-          if (progress < 1) {
-            requestAnimationFrame(animateSpin);
-          } else {
-            isSpinning = false;
-            rotation = currentRotation % 360;
-            const finalAngle = (360 - (rotation % 360)) % 360;
-            const segmentIndex = Math.floor((finalAngle / 360) * 52);
-            const landedNumber = segmentIndex + 1;
-
-            const resultEl = document.getElementById("wheel-result");
-            resultEl.textContent = landedNumber;
-            resultEl.classList.remove("hidden");
-
-            const goBtn = document.getElementById("go-question-btn");
-            goBtn.classList.remove("hidden");
-            spinBtn.style.display = "none";
-          }
-        }
-        animateSpin();
-      }
-
-      function goToQuestion() {
-        document.getElementById("wheel-section").classList.add("hidden");
-        document.getElementById("question-section").classList.remove("hidden");
-        document.getElementById("wheel-result").classList.add("hidden");
-        const spinBtn = document.getElementById("spin-btn");
-        spinBtn.style.display = "flex";
-        spinBtn.disabled = false;
-        spinBtn.innerHTML = `<i class="fas fa-sync-alt"></i> QUAY NGAY!`;
-        document.getElementById("go-question-btn").classList.add("hidden");
-        loadCurrentQuestion();
-      }
-
-      function loadCurrentQuestion() {
-        const q = quizData[questionsOrder[currentQuestionIndex]];
-        document.getElementById("current-question").innerHTML =
-          `Câu <span class="font-bold">${currentQuestionIndex + 1}</span>`;
-        const progress = (currentQuestionIndex / 10) * 100;
-        document.getElementById("progress-bar").style.width = progress + "%";
-
-        document.getElementById("question-text").innerHTML = `
-                <span class="text-emerald-400 text-xl">CÂU ${currentQuestionIndex + 1}:</span><br>
-                ${q.question}
-            `;
-        const container = document.getElementById("options-container");
-        container.innerHTML = "";
-        q.options.forEach((option, index) => {
-          const div = document.createElement("div");
-          div.className = `option bg-emerald-50 hover:bg-emerald-100 border-2 border-transparent rounded-3xl p-6 text-xl cursor-pointer flex items-center gap-4 text-emerald-800`;
-          div.innerHTML = `
-                    <div class="w-9 h-9 rounded-2xl bg-emerald-200 text-emerald-700 font-bold flex items-center justify-center flex-shrink-0">${String.fromCharCode(65 + index)}</div>
-                    <div>${option}</div>
-                `;
-          div.onclick = () => handleAnswer(index);
-          container.appendChild(div);
-        });
-        document.getElementById("feedback-area").classList.add("hidden");
-      }
-
-      // ==================== PHẦN SỬA THEO YÊU CẦU ====================
-      function handleAnswer(selectedIndex) {
-        const q = quizData[questionsOrder[currentQuestionIndex]];
-        const options = document.querySelectorAll("#options-container > div");
-
-        if (selectedIndex === q.correct) {
-          // ĐÚNG → highlight xanh + feedback + tự động qua câu sau
-          options[selectedIndex].classList.add(
-            "border-emerald-500",
-            "bg-emerald-100",
-            "correct-pop",
-          );
-          const feedback = document.getElementById("feedback-area");
-          feedback.classList.remove("hidden");
-          feedback.innerHTML = `
-                    <span class="text-emerald-500 text-4xl">🎉 ĐÚNG RỒI!</span><br>
-                    <span class="text-emerald-600 mt-3 block">Bạn đã nắm chắc kiến thức sinh sản vô tính 🌱</span>
-                `;
-          setTimeout(() => {
-            currentQuestionIndex++;
-            if (currentQuestionIndex >= 10) {
-              finishGame();
-            } else {
-              document
-                .getElementById("question-section")
-                .classList.add("hidden");
-              document
-                .getElementById("wheel-section")
-                .classList.remove("hidden");
-            }
-          }, 1400);
-        } else {
-          // SAI → KHÔNG HIỆN ĐÁP ÁN ĐÚNG, chỉ hiện thông báo ngắn và cho chọn lại
-          options[selectedIndex].classList.add("border-red-400", "bg-red-50");
-
-          const feedback = document.getElementById("feedback-area");
-          feedback.classList.remove("hidden");
-          feedback.innerHTML = `
-                    <span class="text-red-500 text-3xl">❌ Sai rồi!</span><br>
-                    <span class="text-emerald-600 mt-2 block">Hãy chọn lại đáp án khác nhé 🌿</span>
-                `;
-
-          // Sau 1.2 giây tự động ẩn feedback + xóa hiệu ứng đỏ → người chơi tiếp tục chọn
-          setTimeout(() => {
-            options[selectedIndex].classList.remove(
-              "border-red-400",
-              "bg-red-50",
-            );
-            feedback.classList.add("hidden");
-          }, 1200);
-        }
+      function startGame() {
+        document.getElementById("start-screen").classList.add("hidden");
+        currentIndex = 0;
+        showWheel();
       }
 
       function showWheel() {
-        document.getElementById("question-section").classList.add("hidden");
-        document.getElementById("wheel-section").classList.remove("hidden");
+        document.getElementById("wheel-screen").classList.remove("hidden");
+        document.getElementById("question-screen").classList.add("hidden");
+        document.getElementById("end-screen").classList.add("hidden");
+
+        // Reset wheel
+        const wheel = document.getElementById("wheel");
+        wheel.style.animation = "none";
+        void wheel.offsetWidth;
+        wheel.style.animation =
+          "spinWheel 4s cubic-bezier(0.25, 0.1, 0.25, 1) forwards";
+
+        document.getElementById("lucky-number").classList.add("hidden");
+        wheelSpinning = true;
       }
 
-      function startGame() {
-        questionsOrder = [...Array(10).keys()];
-        questionsOrder.sort(() => Math.random() - 0.5);
-        currentQuestionIndex = 0;
-        document.getElementById("start-screen").classList.add("hidden");
-        document.getElementById("game-screen").classList.remove("hidden");
-        document.getElementById("wheel-section").classList.remove("hidden");
-        document.getElementById("question-section").classList.add("hidden");
+      function confirmWheel() {
+        if (!wheelSpinning) return;
+
+        // Random number 1-52
+        const randomNum = Math.floor(Math.random() * 52) + 1;
+        const luckyEl = document.getElementById("lucky-number");
+        luckyEl.textContent = randomNum < 10 ? "0" + randomNum : randomNum;
+        luckyEl.classList.remove("hidden");
+
+        // Stop animation
+        const wheel = document.getElementById("wheel");
+        wheel.style.animation = "none";
+        wheelSpinning = false;
+
+        // Sau 1.5s tự động chuyển sang câu hỏi
         setTimeout(() => {
-          drawWheel();
-        }, 300);
+          document.getElementById("wheel-screen").classList.add("hidden");
+          loadQuestion();
+        }, 1500);
       }
 
-      function finishGame() {
-        document.getElementById("game-screen").classList.add("hidden");
-        document.getElementById("end-screen").classList.remove("hidden");
-        for (let i = 0; i < 8; i++) {
+      function loadQuestion() {
+        const q = questions[currentIndex];
+
+        document.getElementById("question-screen").classList.remove("hidden");
+        document.getElementById("q-number").innerHTML =
+          `CÂU ${q.number} <span class="text-2xl font-normal text-slate-400">/ 20</span>`;
+        document.getElementById("question-text").textContent = q.q;
+
+        const optionsContainer = document.getElementById("options");
+        optionsContainer.innerHTML = `
+                <button onclick="selectAnswer('A', '${q.correct}')" class="option-btn dark-card text-left p-6 rounded-3xl text-xl flex items-center gap-6 hover:border-cyan-400 border-2 border-transparent">
+                    <span class="font-bold text-cyan-400 w-8">A</span>
+                    <span>${q.a}</span>
+                </button>
+                <button onclick="selectAnswer('B', '${q.correct}')" class="option-btn dark-card text-left p-6 rounded-3xl text-xl flex items-center gap-6 hover:border-cyan-400 border-2 border-transparent">
+                    <span class="font-bold text-cyan-400 w-8">B</span>
+                    <span>${q.b}</span>
+                </button>
+                <button onclick="selectAnswer('C', '${q.correct}')" class="option-btn dark-card text-left p-6 rounded-3xl text-xl flex items-center gap-6 hover:border-cyan-400 border-2 border-transparent">
+                    <span class="font-bold text-cyan-400 w-8">C</span>
+                    <span>${q.c}</span>
+                </button>
+                <button onclick="selectAnswer('D', '${q.correct}')" class="option-btn dark-card text-left p-6 rounded-3xl text-xl flex items-center gap-6 hover:border-cyan-400 border-2 border-transparent">
+                    <span class="font-bold text-cyan-400 w-8">D</span>
+                    <span>${q.d}</span>
+                </button>
+            `;
+        // Update progress
+        document
+          .getElementById("progress-container")
+          .classList.remove("hidden");
+        document.getElementById("current-q").textContent = q.number;
+        document.getElementById("progress-bar").style.width =
+          `${((q.number - 1) / 20) * 100}%`;
+      }
+
+      function selectAnswer(selected, correct) {
+        if (selected === correct) {
+          // Correct answer → show success
+          const buttons = document.querySelectorAll("#options button");
+          buttons.forEach((btn) => {
+            if (btn.textContent.includes(selected)) {
+              btn.classList.add(
+                "correct",
+                "border-emerald-400",
+                "bg-emerald-900/30",
+              );
+            }
+          });
+
+          // Trigger success modal
           setTimeout(() => {
-            const bird = document.createElement("div");
-            bird.className = "bird text-5xl";
-            bird.textContent = "🎉";
-            bird.style.top = "40%";
-            bird.style.animationDuration = "3s";
-            document.getElementById("birds-container").appendChild(bird);
-            setTimeout(() => bird.remove(), 4000);
-          }, i * 80);
+            document.getElementById("success-modal").classList.remove("hidden");
+            document.getElementById("success-text").innerHTML =
+              `Đáp án <span class="font-bold text-emerald-400">${selected}</span> là đúng!<br>Chúc mừng bạn!`;
+            launchConfetti();
+          }, 600);
+        } else {
+          // Wrong answer → shake effect
+          const buttons = document.querySelectorAll("#options button");
+          buttons.forEach((btn) => {
+            if (btn.textContent.includes(selected)) {
+              btn.classList.add("animate-[wiggle_0.3s]");
+            }
+          });
+          // Reset animation
+          setTimeout(() => {
+            buttons.forEach((btn) =>
+              btn.classList.remove("animate-[wiggle_0.3s]"),
+            );
+          }, 600);
+        }
+      }
+
+      function hideSuccess() {
+        document.getElementById("success-modal").classList.add("hidden");
+      }
+
+      function nextQuestion() {
+        hideSuccess();
+        currentIndex++;
+        if (currentIndex >= questions.length) {
+          // End game
+          document.getElementById("question-screen").classList.add("hidden");
+          document.getElementById("end-screen").classList.remove("hidden");
+          launchConfetti();
+          return;
+        }
+        showWheel();
+      }
+
+      function launchConfetti() {
+        const canvas = document.createElement("canvas");
+        canvas.style.position = "fixed";
+        canvas.style.top = "0";
+        canvas.style.left = "0";
+        canvas.style.width = "100%";
+        canvas.style.height = "100%";
+        canvas.style.zIndex = "99999";
+        canvas.style.pointerEvents = "none";
+        document.body.appendChild(canvas);
+
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const colors = ["#22d3ee", "#67e8f9", "#a5f4ff", "#0ea5e9"];
+        let particles = [];
+
+        class Particle {
+          constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height - canvas.height;
+            this.size = Math.random() * 12 + 6;
+            this.speed = Math.random() * 8 + 5;
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.angle = Math.random() * Math.PI * 2;
+            this.spin = Math.random() * 0.1 - 0.05;
+          }
+
+          update() {
+            this.y += this.speed;
+            this.angle += this.spin;
+          }
+
+          draw() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.angle);
+            ctx.fillStyle = this.color;
+            ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+            ctx.restore();
+          }
+        }
+
+        for (let i = 0; i < 180; i++) {
+          particles.push(new Particle());
+        }
+
+        function animate() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          particles.forEach((p, i) => {
+            p.update();
+            p.draw();
+            if (p.y > canvas.height) particles.splice(i, 1);
+          });
+
+          if (particles.length > 0) {
+            requestAnimationFrame(animate);
+          } else {
+            canvas.remove();
+          }
+        }
+
+        animate();
+
+        // Auto remove after 6s
+        setTimeout(() => {
+          if (canvas.parentNode) canvas.remove();
+        }, 6000);
+      }
+
+      function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen();
         }
       }
 
       function restartGame() {
-        location.reload();
+        currentIndex = 0;
+        document.getElementById("end-screen").classList.add("hidden");
+        document.getElementById("start-screen").classList.remove("hidden");
       }
 
-      function toggleFullscreen() {
-        const btn = document.getElementById("fullscreen-btn");
-        if (!document.fullscreenElement) {
-          document.documentElement.requestFullscreen().then(() => {
-            btn.innerHTML = `<i class="fas fa-compress"></i>`;
-          });
-        } else {
-          document.exitFullscreen().then(() => {
-            btn.innerHTML = `<i class="fas fa-expand"></i>`;
-          });
+      function exitToStart() {
+        if (confirm("Bạn có chắc muốn thoát trò chơi không?")) {
+          currentIndex = 0;
+          document.getElementById("question-screen").classList.add("hidden");
+          document.getElementById("start-screen").classList.remove("hidden");
+          document.getElementById("progress-container").classList.add("hidden");
         }
       }
 
-      // Khởi động
+      // Init
       window.onload = function () {
-        createBirds();
+        initializeTailwind();
         console.log(
-          "%c✅ Trò chơi đã sửa: SAI thì KHÔNG hiện đáp án đúng, tiếp tục chọn lại thoải mái!",
-          "color:#10b981; font-size:18px; font-weight:bold",
+          "%c✅ Website trò chơi Hướng nghiệp Chủ đề 7 đã sẵn sàng!",
+          "color:#22d3ee; font-size:18px; font-weight:bold",
         );
       };
     </script>
