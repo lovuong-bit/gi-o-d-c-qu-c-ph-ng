@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TOÁN 11 • TỔ 1 - TRẮC NGHIỆM GEOGEBRA 3D</title>
+    <title>TOÁN 11 • TỔ 1 - GEOGEBRA 3D</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
@@ -13,36 +13,35 @@
       body {
         background: #0f172a;
         color: #f1f5f9;
-        font-family:
-          system-ui,
-          -apple-system,
-          sans-serif;
-        margin: 0;
+        font-family: system-ui, sans-serif;
         overflow-x: hidden;
       }
-
-      /* Fix lỗi backdrop-filter cho Safari */
-      .glass-card {
+      .glass {
         background: rgba(30, 41, 59, 0.7);
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
-
-      .option-btn {
-        transition: all 0.2s ease;
+      .opt {
+        transition: all 0.2s;
         border: 1px solid rgba(255, 255, 255, 0.05);
       }
-      .option-btn:hover:not(:disabled) {
+      .opt:hover:not(:disabled) {
         background: rgba(59, 130, 246, 0.1);
         border-color: #3b82f6;
       }
-      .option-btn:disabled {
-        opacity: 0.2;
+      .opt:disabled {
+        opacity: 0.4;
         cursor: not-allowed;
-        text-decoration: line-through;
       }
-
+      #quiz-node {
+        transition: opacity 0.3s ease;
+        opacity: 0;
+      }
+      #wheel-canvas {
+        transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1);
+        transform: rotate(0deg);
+      }
       @keyframes shake {
         0%,
         100% {
@@ -55,53 +54,55 @@
           transform: translateX(4px);
         }
       }
-      .wrong-shake {
+      .wrong {
         animation: shake 0.2s ease-in-out 0s 2;
         border-color: #ef4444 !important;
+        background: rgba(239, 68, 68, 0.1) !important;
       }
-
-      /* Hiệu ứng xoay vòng mượt mà */
-      #wheel-canvas {
-        transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1);
+      .correct-blink {
+        border-color: #22c55e !important;
+        background: rgba(34, 197, 94, 0.2) !important;
+        font-weight: bold;
       }
     </style>
   </head>
   <body class="min-h-screen">
-    <header
-      class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-white/10 px-6 py-4"
-    >
-      <div class="max-w-5xl mx-auto flex justify-between items-center">
+    <header class="sticky top-0 z-50 glass border-b border-white/10 px-4 py-4">
+      <div class="max-w-5xl mx-auto flex justify-between items-center gap-3">
         <div class="flex items-center gap-3">
           <div
-            class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20"
+            class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg"
           >
-            <i class="fa-solid fa-layer-group"></i>
+            <i class="fa-solid fa-cube"></i>
           </div>
           <div>
-            <h1 class="text-lg font-bold">TOÁN 11 - TỔ 1</h1>
-            <p class="text-[10px] text-blue-400 uppercase font-bold">
+            <h1 class="text-sm md:text-lg font-bold">TOÁN 11 - TỔ 1</h1>
+            <p
+              class="text-[9px] text-blue-400 font-bold uppercase tracking-tight"
+            >
               GeoGebra 3D Quiz
             </p>
           </div>
         </div>
-
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3">
           <div
             id="status-bar"
-            class="hidden flex gap-4 text-xs font-bold uppercase"
+            class="hidden flex gap-2 text-[10px] font-bold uppercase"
           >
-            <div class="bg-white/5 px-3 py-2 rounded-lg border border-white/10">
-              Câu: <span id="current-idx" class="text-blue-400">1</span>/50
+            <div class="glass px-2 py-2 rounded-lg">
+              CÂU: <span id="current-idx" class="text-blue-400">1</span>/<span
+                id="total-q"
+                >50</span
+              >
             </div>
-            <div class="bg-white/5 px-3 py-2 rounded-lg border border-white/10">
-              Điểm: <span id="score-val" class="text-green-400">0.0</span>
+            <div class="glass px-2 py-2 rounded-lg">
+              ĐIỂM: <span id="score-val" class="text-green-400">0.0</span>
             </div>
           </div>
           <button
-            onclick="toggleFullScreen()"
-            title="Toàn màn hình"
-            aria-label="Kích hoạt toàn màn hình"
-            class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
+            onclick="toggleFS()"
+            aria-label="Toàn màn hình"
+            class="w-10 h-10 flex items-center justify-center rounded-lg glass hover:bg-white/10 transition-colors"
           >
             <i id="fs-icon" class="fa-solid fa-expand text-slate-300"></i>
           </button>
@@ -109,25 +110,28 @@
       </div>
     </header>
 
-    <main class="max-w-3xl mx-auto p-6">
+    <main class="max-w-3xl mx-auto p-4 md:p-6">
       <div id="start-node" class="py-20 text-center">
-        <h2 class="text-4xl md:text-5xl font-black mb-6">
-          Vẽ Hình Khối Với<br /><span class="text-blue-500">GeoGebra</span>
+        <h2 class="text-4xl font-black mb-8 leading-tight">
+          Trắc Nghiệm<br /><span class="text-blue-500">GeoGebra 3D</span>
         </h2>
         <button
-          onclick="startQuiz()"
-          class="bg-blue-600 hover:bg-blue-700 px-12 py-5 rounded-2xl text-xl font-bold shadow-xl shadow-blue-600/20"
+          id="start-btn"
+          onclick="initGame()"
+          class="bg-blue-600 hover:bg-blue-700 px-12 py-5 rounded-2xl text-xl font-bold shadow-xl active:scale-95 transition"
         >
-          VÀO TRÒ CHƠI
+          BẮT ĐẦU
         </button>
       </div>
 
       <div id="lucky-node" class="hidden py-16 text-center">
-        <h3 class="text-xl font-bold text-slate-400 mb-8 uppercase">
-          Số thứ tự may mắn
+        <h3
+          class="text-slate-400 mb-6 uppercase font-bold tracking-widest text-sm"
+        >
+          Người may mắn tiếp theo
         </h3>
         <div
-          class="w-40 h-40 rounded-full border-4 border-blue-500/20 bg-blue-500/5 flex items-center justify-center mx-auto mb-10"
+          class="w-36 h-36 rounded-full border-4 border-blue-500/20 bg-blue-500/5 flex items-center justify-center mx-auto mb-10 shadow-2xl shadow-blue-500/10"
         >
           <span id="lucky-val" class="text-6xl font-black text-blue-500"
             >?</span
@@ -135,8 +139,8 @@
         </div>
         <button
           id="spin-btn"
-          onclick="runLuckySpin()"
-          class="bg-white text-black px-10 py-3 rounded-xl font-bold"
+          onclick="spinLucky()"
+          class="bg-white text-black px-12 py-4 rounded-xl font-bold hover:bg-slate-200 active:scale-95 transition"
         >
           QUAY SỐ
         </button>
@@ -147,58 +151,53 @@
           <button
             id="t-5050"
             onclick="use5050()"
-            class="flex-1 glass-card p-3 rounded-xl flex items-center justify-center gap-2 hover:bg-white/5 disabled:opacity-30"
+            class="flex-1 glass p-3 rounded-xl flex flex-col items-center gap-1 active:scale-95"
           >
-            <i class="fa-solid fa-scissors text-orange-400"></i>
-            <span class="text-[10px] font-bold"
+            <i class="fa-solid fa-scissors text-orange-400"></i
+            ><span class="text-[9px] font-bold"
               >50/50 (<span id="c-5050">2</span>)</span
             >
           </button>
           <button
             id="t-gpt"
             onclick="useGPT()"
-            class="flex-1 glass-card p-3 rounded-xl flex items-center justify-center gap-2 hover:bg-white/5 disabled:opacity-30"
+            class="flex-1 glass p-3 rounded-xl flex flex-col items-center gap-1 active:scale-95"
           >
-            <i class="fa-solid fa-robot text-cyan-400"></i>
-            <span class="text-[10px] font-bold"
-              >CHATGPT (<span id="c-gpt">1</span>)</span
+            <i class="fa-solid fa-robot text-cyan-400"></i
+            ><span class="text-[9px] font-bold"
+              >GPT (<span id="c-gpt">1</span>)</span
             >
           </button>
           <button
             id="t-help"
             onclick="useHelp()"
-            class="flex-1 glass-card p-3 rounded-xl flex items-center justify-center gap-2 hover:bg-white/5 disabled:opacity-30"
+            class="flex-1 glass p-3 rounded-xl flex flex-col items-center gap-1 active:scale-95"
           >
-            <i class="fa-solid fa-handshake text-purple-400"></i>
-            <span class="text-[10px] font-bold"
-              >TRỢ GIÚP (<span id="c-help">2</span>)</span
+            <i class="fa-solid fa-users text-purple-400"></i
+            ><span class="text-[9px] font-bold"
+              >GIÚP (<span id="c-help">2</span>)</span
             >
           </button>
         </div>
-        <div class="glass-card p-8 rounded-3xl">
+        <div class="glass p-6 md:p-10 rounded-3xl relative">
           <div
             id="q-txt"
-            class="text-xl md:text-2xl font-medium mb-10 leading-snug"
-          >
-            Câu hỏi...
-          </div>
-          <div id="ans-box" class="grid grid-cols-1 gap-4"></div>
+            class="text-lg md:text-2xl font-semibold mb-8 leading-relaxed"
+          ></div>
+          <div id="ans-box" class="grid gap-3"></div>
         </div>
       </div>
 
       <div id="bonus-node" class="hidden py-10 text-center">
-        <h3 class="text-3xl font-black text-emerald-400 mb-8 uppercase">
-          Vòng Quay Hồi Lượt (10 Ô)
+        <h3
+          class="text-2xl font-black text-emerald-400 mb-8 uppercase tracking-widest"
+        >
+          VÒNG QUAY MAY MẮN
         </h3>
         <div class="relative w-72 h-72 mx-auto mb-10">
-          <canvas
-            id="wheel-canvas"
-            width="400"
-            height="400"
-            class="w-full h-full"
-          ></canvas>
+          <canvas id="wheel-canvas"></canvas>
           <div
-            class="absolute -top-4 left-1/2 -translate-x-1/2 text-3xl text-red-500 z-10"
+            class="absolute -top-5 left-1/2 -translate-x-1/2 text-4xl text-red-500 z-10 drop-shadow-lg"
           >
             ▼
           </div>
@@ -206,39 +205,39 @@
         <button
           id="bonus-btn"
           onclick="spinBonus()"
-          class="bg-emerald-600 px-10 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-emerald-600/30"
+          class="bg-emerald-600 px-12 py-4 rounded-2xl font-bold hover:bg-emerald-700 active:scale-95 transition"
         >
           QUAY NGAY
         </button>
       </div>
 
       <div id="end-node" class="hidden py-20 text-center">
-        <div class="text-6xl mb-6">🏆</div>
-        <div id="final-res" class="text-7xl font-black text-blue-500 mb-10">
+        <div class="text-7xl mb-6">🏆</div>
+        <h3 class="text-2xl font-bold mb-2 uppercase">KẾT QUẢ CUỐI CÙNG</h3>
+        <div id="final-res" class="text-8xl font-black text-blue-500 mb-10">
           0.0
         </div>
         <button
           onclick="location.reload()"
-          class="bg-white/10 px-8 py-3 rounded-xl font-bold"
+          class="glass px-10 py-4 rounded-xl font-bold hover:bg-white/10 transition-colors"
         >
-          LÀM LẠI
+          LÀM LẠI TRÒ CHƠI
         </button>
       </div>
     </main>
 
     <div
       id="modal-bg"
-      class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-sm"
+      class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm"
     >
       <div
-        class="glass-card p-8 rounded-3xl max-w-sm w-full text-center shadow-2xl"
+        class="glass p-8 rounded-3xl max-w-sm w-full text-center shadow-2xl overflow-hidden border border-white/20"
       >
-        <div id="m-icon" class="text-5xl mb-4"></div>
-        <h4 id="m-title" class="text-2xl font-bold mb-2"></h4>
-        <p id="m-body" class="text-slate-400 mb-8 text-sm"></p>
+        <h4 id="m-title" class="text-2xl font-bold mb-3"></h4>
+        <div id="m-body" class="text-slate-300 mb-8 leading-relaxed"></div>
         <button
           id="m-btn"
-          class="w-full py-4 bg-blue-600 rounded-2xl font-bold"
+          class="w-full py-4 bg-blue-600 rounded-2xl font-bold hover:bg-blue-700 active:scale-95 transition"
         >
           TIẾP TỤC
         </button>
@@ -246,8 +245,8 @@
     </div>
 
     <script>
-      // Dữ liệu bộ câu hỏi 50 câu (Rút gọn hiển thị ở đây để đệ dễ nhìn, đệ giữ nguyên bộ 50 câu của mình nhé)
-      const dataSet = [
+      const dataRaw = [
+        // --- NẠP ĐỦ 50 CÂU ---
         {
           q: "Để mở vùng làm việc 3D trong GeoGebra, ta chọn menu nào?",
           a: "Hồ sơ",
@@ -257,179 +256,541 @@
           r: "B",
         },
         {
-          q: "Trong không gian 3D của phần mềm, trục tọa độ Ox mặc định được quy định là màu gì?",
-          a: "Màu đỏ",
-          b: "Màu xanh lá",
-          c: "Màu xanh dương",
-          d: "Màu vàng",
+          q: "Trong 3D, trục Ox mặc định có màu gì?",
+          a: "Đỏ",
+          b: "Xanh lá",
+          c: "Xanh dương",
+          d: "Vàng",
           r: "A",
         },
-        // ... (Tiếp tục 48 câu còn lại giống y hệt bản trước)
         {
-          q: "Để tạo hình lăng trụ ngũ giác, ở công cụ Đa giác đều ta nhập n bằng?",
-          a: "n=3",
-          b: "n=4",
-          c: "n=6",
-          d: "n=5",
+          q: "Trục Oz trong GeoGebra 3D màu gì?",
+          a: "Đỏ",
+          b: "Xanh lá",
+          c: "Xanh dương",
+          d: "Vàng",
+          r: "C",
+        },
+        {
+          q: "Để tạo lăng trụ từ đa giác đáy có sẵn, dùng công cụ?",
+          a: "Sphere",
+          b: "Cone",
+          c: "Pyramid",
+          d: "Extrude to Prism",
           r: "D",
         },
+        {
+          q: "Xoay tự do góc nhìn 3D bằng cách nào?",
+          a: "Nháy đúp",
+          b: "Giữ chuột phải",
+          c: "Phím Enter",
+          d: "Phím Space",
+          r: "B",
+        },
+        {
+          q: "Công cụ 'Net' dùng để?",
+          a: "Vẽ lưới",
+          b: "Trải mặt phẳng khối",
+          c: "Tính thể tích",
+          d: "Xóa hình",
+          r: "B",
+        },
+        {
+          q: "Mặt phẳng Oxy có phương trình là?",
+          a: "x=0",
+          b: "y=0",
+          c: "z=0",
+          d: "x+y=0",
+          r: "C",
+        },
+        {
+          q: "Lăng trụ tam giác có bao nhiêu mặt?",
+          a: "4",
+          b: "5",
+          c: "6",
+          d: "9",
+          r: "B",
+        },
+        {
+          q: "Hình lập phương có bao nhiêu cạnh?",
+          a: "8",
+          b: "10",
+          c: "12",
+          d: "16",
+          r: "C",
+        },
+        {
+          q: "Để vẽ mặt cầu biết tâm và bán kính dùng?",
+          a: "Sphere with Center and Radius",
+          b: "Circle",
+          c: "Ball",
+          d: "Cube",
+          r: "A",
+        },
+        {
+          q: "Trục Oy trong không gian 3D màu gì?",
+          a: "Đỏ",
+          b: "Xanh lá",
+          c: "Xanh dương",
+          d: "Tím",
+          r: "B",
+        },
+        {
+          q: "Công cụ 'Extrude to Pyramid' dùng tạo hình?",
+          a: "Trụ",
+          b: "Chóp",
+          c: "Hộp",
+          d: "Nón",
+          r: "B",
+        },
+        {
+          q: "Hình tứ diện đều có bao nhiêu đỉnh?",
+          a: "4",
+          b: "6",
+          c: "8",
+          d: "10",
+          r: "A",
+        },
+        {
+          q: "Hình bát diện đều có bao nhiêu mặt?",
+          a: "6",
+          b: "8",
+          c: "10",
+          d: "12",
+          r: "B",
+        },
+        {
+          q: "Khối đa diện đều loại {3;3} là?",
+          a: "Lập phương",
+          b: "Tứ diện đều",
+          c: "Bát diện đều",
+          d: "12 mặt đều",
+          r: "B",
+        },
+        {
+          q: "Số cạnh của hình chóp ngũ giác là?",
+          a: "5",
+          b: "8",
+          c: "10",
+          d: "12",
+          r: "C",
+        },
+        {
+          q: "Công thức V khối chóp là?",
+          a: "Bh",
+          b: "1/2 Bh",
+          c: "1/3 Bh",
+          d: "4/3 Bh",
+          r: "C",
+        },
+        {
+          q: "Khối đa diện đều {4;3} là?",
+          a: "Tứ diện",
+          b: "Lập phương",
+          c: "Bát diện",
+          d: "20 mặt",
+          r: "B",
+        },
+        {
+          q: "Số mặt lăng trụ lục giác là?",
+          a: "6",
+          b: "7",
+          c: "8",
+          d: "12",
+          r: "C",
+        },
+        {
+          q: "Hình hộp chữ nhật có bao nhiêu mặt?",
+          a: "4",
+          b: "6",
+          c: "8",
+          d: "12",
+          r: "B",
+        },
+        {
+          q: "Góc giữa 2 đường thẳng song song là?",
+          a: "0°",
+          b: "90°",
+          c: "180°",
+          d: "45°",
+          r: "A",
+        },
+        {
+          q: "Chóp tứ giác đều có đáy là hình gì?",
+          a: "Thoi",
+          b: "Chữ nhật",
+          c: "Vuông",
+          d: "Thang",
+          r: "C",
+        },
+        {
+          q: "V khối lăng trụ là?",
+          a: "1/3 Bh",
+          b: "Bh",
+          c: "2Bh",
+          d: "1/2 Bh",
+          r: "B",
+        },
+        {
+          q: "Diện tích toàn phần lập phương cạnh a là?",
+          a: "4a²",
+          b: "6a²",
+          c: "a³",
+          d: "12a",
+          r: "B",
+        },
+        {
+          q: "Khối 12 mặt đều, mặt là hình gì?",
+          a: "Tam giác",
+          b: "Vuông",
+          c: "Ngũ giác",
+          d: "Lục giác",
+          r: "C",
+        },
+        {
+          q: "Khối 20 mặt đều có bao nhiêu cạnh?",
+          a: "12",
+          b: "20",
+          c: "30",
+          d: "60",
+          r: "C",
+        },
+        {
+          q: "Lăng trụ tứ giác có bao nhiêu đỉnh?",
+          a: "4",
+          b: "6",
+          c: "8",
+          d: "10",
+          r: "C",
+        },
+        {
+          q: "Mặt bên hình chóp đều là hình gì?",
+          a: "TG vuông",
+          b: "TG cân",
+          c: "Chữ nhật",
+          d: "Thoi",
+          r: "B",
+        },
+        {
+          q: "Bát diện đều có bao nhiêu đỉnh?",
+          a: "6",
+          b: "8",
+          c: "12",
+          d: "20",
+          r: "A",
+        },
+        {
+          q: "Mặt phẳng đi qua 3 điểm dùng công cụ?",
+          a: "Line",
+          b: "Plane",
+          c: "Segment",
+          d: "Polygon",
+          r: "B",
+        },
+        {
+          q: "Lệnh vẽ điểm A(1,2,3) là?",
+          a: "A=[1,2,3]",
+          b: "A=(1,2,3)",
+          c: "A:{1,2,3}",
+          d: "Point(1,3)",
+          r: "B",
+        },
+        {
+          q: "Undo trong GeoGebra dùng phím?",
+          a: "Ctrl+Z",
+          b: "Ctrl+Y",
+          c: "Alt+Z",
+          d: "Shift+Z",
+          r: "A",
+        },
+        {
+          q: "Ẩn lưới 3D nhấp chuột phải chọn?",
+          a: "Delete",
+          b: "Show Grid",
+          c: "Hide",
+          d: "Fix",
+          r: "B",
+        },
+        {
+          q: "GeoGebra có xuất file in 3D không?",
+          a: "Không",
+          b: "Có (.stl)",
+          c: "Chỉ ảnh",
+          d: "Chỉ PDF",
+          r: "B",
+        },
+        {
+          q: "Giao 2 mặt dùng lệnh?",
+          a: "Volume",
+          b: "Intersect",
+          c: "Area",
+          d: "Angle",
+          r: "B",
+        },
+        {
+          q: "Tứ diện đều có bao nhiêu cạnh?",
+          a: "4",
+          b: "5",
+          c: "6",
+          d: "8",
+          r: "C",
+        },
+        { q: "Hình trụ có mấy đáy?", a: "0", b: "1", c: "2", d: "3", r: "C" },
+        {
+          q: "Lăng trụ đứng có cạnh bên như thế nào đáy?",
+          a: "Song song",
+          b: "Vuông góc",
+          c: "Chéo",
+          d: "45°",
+          r: "B",
+        },
+        {
+          q: "Số đỉnh hình bát diện đều là?",
+          a: "6",
+          b: "8",
+          c: "12",
+          d: "20",
+          r: "A",
+        },
+        {
+          q: "Hình chóp tam giác có mấy mặt?",
+          a: "3",
+          b: "4",
+          c: "5",
+          d: "6",
+          r: "B",
+        },
+        {
+          q: "Đường thẳng vuông góc mp thì vuông góc?",
+          a: "1 đường",
+          b: "2 đường",
+          c: "Mọi đường trong mp",
+          d: "0 đường",
+          r: "C",
+        },
+        {
+          q: "Hình nón có mấy đỉnh?",
+          a: "0",
+          b: "1",
+          c: "2",
+          d: "vô số",
+          r: "B",
+        },
+        {
+          q: "Khối lăng trụ tam giác có bao nhiêu cạnh?",
+          a: "6",
+          b: "9",
+          c: "12",
+          d: "15",
+          r: "B",
+        },
+        {
+          q: "Đa diện có các mặt là tam giác gọi là?",
+          a: "TG đều",
+          b: "Khối TG",
+          c: "Deltahedron",
+          d: "Cube",
+          r: "C",
+        },
+        {
+          q: "Số mặt của khối 20 mặt đều là?",
+          a: "12",
+          b: "20",
+          c: "30",
+          d: "60",
+          r: "B",
+        },
+        {
+          q: "Cạnh bên hình lăng trụ như thế nào nhau?",
+          a: "Vuông góc",
+          b: "Song song và bằng nhau",
+          c: "Chéo nhau",
+          d: "Cắt nhau",
+          r: "B",
+        },
+        {
+          q: "Mặt cầu cắt mp theo giao tuyến?",
+          a: "Đường thẳng",
+          b: "Đường tròn",
+          c: "Điểm",
+          d: "B và C",
+          r: "D",
+        },
+        {
+          q: "Khối lăng trụ ngũ giác có bao nhiêu cạnh?",
+          a: "10",
+          b: "15",
+          c: "20",
+          d: "25",
+          r: "B",
+        },
+        {
+          q: "Hình hộp có bao nhiêu mặt là hình bình hành?",
+          a: "4",
+          b: "6",
+          c: "8",
+          d: "10",
+          r: "B",
+        },
+        {
+          q: "Đỉnh của hình chóp gọi là?",
+          a: "Tâm",
+          b: "Đỉnh chóp",
+          c: "Trọng tâm",
+          d: "Giao điểm",
+          r: "B",
+        },
       ];
-
-      // Đã nạp đủ 50 câu vào code của đệ (giả định đệ copy-paste đoạn dataSet đầy đủ)
 
       let state = {
         idx: 0,
         score: 0,
         lucky: 0,
         tools: { 5050: 2, help: 2, gpt: 1 },
+        isAns: false,
+        data: [],
+        started: false,
       };
 
-      const bonusItems = [
-        { txt: "CÁI NỊT", t: null, c: "#1e293b" },
-        { txt: "TRỢ GIÚP", t: "help", c: "#a855f7" },
-        { txt: "CÁI NỊT", t: null, c: "#1e293b" },
-        { txt: "CHATGPT", t: "gpt", c: "#10a37f" },
-        { txt: "CÁI NỊT", t: null, c: "#1e293b" },
-        { txt: "50/50", t: "5050", c: "#3b82f6" },
-        { txt: "CÁI NỊT", t: null, c: "#1e293b" },
-        { txt: "TRỢ GIÚP", t: "help", c: "#a855f7" },
-        { txt: "CÁI NỊT", t: null, c: "#1e293b" },
-        { txt: "CÁI NỊT", t: null, c: "#1e293b" },
-      ];
-
-      function toggleFullScreen() {
-        const icon = document.getElementById("fs-icon");
-        if (!document.fullscreenElement) {
-          document.documentElement
-            .requestFullscreen()
-            .catch((e) => console.log(e));
-          icon.classList.replace("fa-expand", "fa-compress");
-        } else {
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-            icon.classList.replace("fa-compress", "fa-expand");
-          }
-        }
-      }
-
-      function startQuiz() {
+      function initGame() {
+        if (state.started) return;
+        state.started = true;
+        state.data = [...dataRaw].sort(() => Math.random() - 0.5);
+        document.getElementById("total-q").textContent = state.data.length;
         document.getElementById("start-node").classList.add("hidden");
         document.getElementById("status-bar").classList.remove("hidden");
-        showLuckyNode();
+        showLucky();
       }
 
-      function showLuckyNode() {
+      function showLucky() {
         document.getElementById("quiz-node").classList.add("hidden");
         document.getElementById("lucky-node").classList.remove("hidden");
         document.getElementById("lucky-val").textContent = "?";
         document.getElementById("spin-btn").disabled = false;
       }
 
-      function runLuckySpin() {
+      function spinLucky() {
         const btn = document.getElementById("spin-btn");
         btn.disabled = true;
-        let count = 0;
+        let c = 0;
         let t = setInterval(() => {
           state.lucky = Math.floor(Math.random() * 52) + 1;
           document.getElementById("lucky-val").textContent = state.lucky;
-          if (++count > 15) {
+          if (++c > 15) {
             clearInterval(t);
-            setTimeout(loadQ, 800);
+            setTimeout(renderQ, 800);
           }
         }, 50);
       }
 
-      function loadQ() {
+      function renderQ() {
+        state.isAns = false;
+        const qNode = document.getElementById("quiz-node");
         document.getElementById("lucky-node").classList.add("hidden");
-        document.getElementById("quiz-node").classList.remove("hidden");
-        const q = dataSet[state.idx];
+        qNode.classList.remove("hidden");
+        requestAnimationFrame(() => (qNode.style.opacity = "1"));
+        const q = state.data[state.idx];
         document.getElementById("current-idx").textContent = state.idx + 1;
         document.getElementById("q-txt").textContent = q.q;
         const box = document.getElementById("ans-box");
         box.innerHTML = "";
-        ["A", "B", "C", "D"].forEach((letter) => {
+        ["A", "B", "C", "D"].forEach((l) => {
           const btn = document.createElement("button");
-          btn.id = `btn-${letter}`;
           btn.className =
-            "option-btn glass-card p-5 rounded-2xl text-left flex items-center gap-4 text-lg font-medium";
-          btn.onclick = () => handleChoice(letter);
-          btn.innerHTML = `<span class="bg-blue-600 w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm">${letter}</span> <span>${q[letter.toLowerCase()]}</span>`;
+            "opt glass p-4 rounded-xl text-left flex items-center gap-3 text-sm md:text-base";
+          btn.innerHTML = `<span class="bg-blue-600 w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center font-bold text-xs">${l}</span> <span>${q[l.toLowerCase()]}</span>`;
+          btn.onclick = () => checkAns(l, btn);
           box.appendChild(btn);
         });
         updateTools();
       }
 
-      function handleChoice(choice) {
-        const q = dataSet[state.idx];
-        const isTrue = choice === q.r;
-        document
-          .querySelectorAll(".option-btn")
-          .forEach((b) => (b.onclick = null));
-        if (isTrue) {
-          state.score += 0.2;
+      function checkAns(choice, btn) {
+        if (state.isAns) return;
+        state.isAns = true;
+        const q = state.data[state.idx];
+        document.querySelectorAll(".opt").forEach((b) => (b.disabled = true));
+        if (choice === q.r) {
+          // FIX ĐIỂM: Cộng 0.2 cố định
+          state.score = +(state.score + 0.2).toFixed(1);
           document.getElementById("score-val").textContent =
             state.score.toFixed(1);
-          document
-            .getElementById(`btn-${choice}`)
-            .classList.add("bg-green-500/20", "border-green-500");
-          showPop(
-            "✅ CHÍNH XÁC",
-            `Bạn số ${state.lucky} giỏi quá!`,
-            "TIẾP TỤC",
-            nextStep,
-          );
+          btn.classList.add("correct-blink");
+          pop("✅ CHÍNH XÁC", `Bạn số ${state.lucky} giỏi quá!`, next);
         } else {
-          document.getElementById(`btn-${choice}`).classList.add("wrong-shake");
-          document
-            .getElementById(`btn-${q.r}`)
-            .classList.add("border-green-500");
-          showPop("❌ SAI RỒI", `Đáp án đúng là ${q.r}.`, "TIẾP TỤC", nextStep);
+          btn.classList.add("wrong");
+          const letters = ["A", "B", "C", "D"];
+          const btns = document.querySelectorAll(".opt");
+          btns[letters.indexOf(q.r)].classList.add("correct-blink");
+          pop("❌ SAI RỒI", `Đáp án đúng là <b>${q.r}</b>`, next);
         }
       }
 
-      function nextStep() {
-        hidePop();
-        if (++state.idx >= 50) return finish();
+      function pop(t, b, cb) {
+        document.getElementById("quiz-node").style.pointerEvents = "none";
+        document.getElementById("m-title").textContent = t;
+        document.getElementById("m-body").innerHTML = b;
+        document.getElementById("m-btn").onclick = () => {
+          cb();
+          hidePop();
+        };
+        document.getElementById("modal-bg").classList.remove("hidden");
+      }
+
+      function hidePop() {
+        document.getElementById("quiz-node").style.pointerEvents = "auto";
+        document.getElementById("modal-bg").classList.add("hidden");
+      }
+
+      function next() {
+        if (++state.idx >= state.data.length) return finish();
         if (state.idx % 10 === 0) showBonus();
-        else showLuckyNode();
+        else showLucky();
       }
 
       function updateTools() {
-        document.getElementById("c-5050").textContent = state.tools["5050"];
-        document.getElementById("c-help").textContent = state.tools["help"];
-        document.getElementById("c-gpt").textContent = state.tools["gpt"];
-        document.getElementById("t-5050").disabled = state.tools["5050"] <= 0;
-        document.getElementById("t-help").disabled = state.tools["help"] <= 0;
-        document.getElementById("t-gpt").disabled = state.tools["gpt"] <= 0;
+        ["5050", "help", "gpt"].forEach((t) => {
+          document.getElementById(`c-${t}`).textContent = state.tools[t];
+          document.getElementById(`t-${t}`).disabled =
+            state.tools[t] <= 0 || state.isAns;
+        });
       }
 
       function use5050() {
-        if (state.tools["5050"] <= 0) return;
-        state.tools["5050"]--;
-        updateTools();
-        const q = dataSet[state.idx];
-        const wrongs = ["A", "B", "C", "D"]
-          .filter((l) => l !== q.r)
+        if (state.tools["5050"] <= 0 || state.isAns) return;
+        const q = state.data[state.idx];
+        const btns = Array.from(document.querySelectorAll("#ans-box button"));
+        const activeWrongs = ["A", "B", "C", "D"]
+          .map((l, i) => ({ l, i }))
+          .filter((item) => item.l !== q.r && !btns[item.i].disabled)
           .sort(() => 0.5 - Math.random());
-        document.getElementById(`btn-${wrongs[0]}`).disabled = true;
-        document.getElementById(`btn-${wrongs[1]}`).disabled = true;
+        if (activeWrongs.length > 0) {
+          state.tools["5050"]--;
+          updateTools();
+          activeWrongs.slice(0, 2).forEach((w) => {
+            btns[w.i].disabled = true;
+            btns[w.i].style.opacity = "0.3";
+          });
+        }
       }
+
       function useGPT() {
-        if (state.tools["gpt"] <= 0) return;
-        state.tools["gpt"]--;
-        updateTools();
-        window.open("https://chatgpt.com", "_blank");
+        if (state.tools["gpt"] > 0 && !state.isAns) {
+          state.tools["gpt"]--;
+          updateTools();
+          window.open("https://chatgpt.com", "_blank");
+        }
       }
       function useHelp() {
-        if (state.tools["help"] <= 0) return;
-        state.tools["help"]--;
-        updateTools();
-        showPop(
-          "🎲 TRỢ GIÚP",
-          `Hỏi bạn số <b class="text-blue-500 text-2xl">${Math.floor(Math.random() * 52) + 1}</b>!`,
-          "ĐÃ HIỂU",
-          hidePop,
-        );
+        if (state.tools["help"] > 0 && !state.isAns) {
+          state.tools["help"]--;
+          updateTools();
+          pop(
+            "🎲 TRỢ GIÚP",
+            `Bạn số ${Math.floor(Math.random() * 52) + 1} hỗ trợ nhé!`,
+            () => {},
+          );
+        }
       }
 
       function showBonus() {
@@ -437,76 +798,89 @@
         document.getElementById("bonus-node").classList.remove("hidden");
         const c = document.getElementById("wheel-canvas");
         const ctx = c.getContext("2d");
+        const dpr = window.devicePixelRatio || 1;
+        c.width = 300 * dpr;
+        c.height = 300 * dpr;
+        c.style.width = "300px";
+        c.style.height = "300px";
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, c.width, c.height);
+        ctx.scale(dpr, dpr);
+        const items = [
+          "NỊT",
+          "50/50",
+          "NỊT",
+          "GIÚP",
+          "NỊT",
+          "GPT",
+          "NỊT",
+          "GIÚP",
+          "NỊT",
+          "50/50",
+        ];
         const arc = (Math.PI * 2) / 10;
-        ctx.clearRect(0, 0, 400, 400);
-        bonusItems.forEach((it, i) => {
+        items.forEach((txt, i) => {
           ctx.beginPath();
-          ctx.fillStyle = it.c;
-          ctx.moveTo(200, 200);
-          ctx.arc(200, 200, 180, i * arc, (i + 1) * arc);
+          ctx.fillStyle = i % 2 ? "#1e293b" : "#3b82f6";
+          ctx.moveTo(150, 150);
+          ctx.arc(150, 150, 145, i * arc, (i + 1) * arc);
           ctx.fill();
-          ctx.strokeStyle = "rgba(255,255,255,0.1)";
-          ctx.stroke();
           ctx.save();
-          ctx.translate(200, 200);
+          ctx.translate(150, 150);
           ctx.rotate(i * arc + arc / 2);
           ctx.fillStyle = "#fff";
-          ctx.font = "bold 12px sans-serif";
-          ctx.fillText(it.txt, 80, 5);
+          ctx.font = "bold 11px sans-serif";
+          ctx.textAlign = "right";
+          ctx.fillText(txt, 135, 5);
           ctx.restore();
         });
       }
 
       function spinBonus() {
         const btn = document.getElementById("bonus-btn");
+        if (btn.disabled) return;
         btn.disabled = true;
         const c = document.getElementById("wheel-canvas");
-        const totalDeg = 1800 + Math.floor(Math.random() * 360);
-        c.style.transform = `rotate(${totalDeg}deg)`;
-
+        const deg = 1800 + Math.floor(Math.random() * 360);
+        c.style.transition = "transform 5s cubic-bezier(0.15, 0, 0.15, 1)";
+        c.style.transform = `rotate(${deg}deg)`;
         setTimeout(() => {
-          const actualDeg = totalDeg % 360;
-          const idx = 9 - Math.floor(actualDeg / 36);
-          const res = bonusItems[idx];
-          if (res.t) {
-            state.tools[res.t]++;
-            showPop("🎁 THƯỞNG", `Nhận thêm 1 lượt ${res.txt}!`, "NHẬN", () => {
-              hidePop();
-              showLuckyNode();
-            });
-          } else {
-            showPop(
-              "🤡 CÁI NỊT",
-              "Đúng là cái nịt thiệt...",
-              "TIẾP TỤC",
-              () => {
-                hidePop();
-                showLuckyNode();
-              },
-            );
-          }
+          const final = deg % 360;
+          const idx = Math.floor(((360 - final + 270) % 360) / 36);
+          const gifts = [
+            null,
+            "5050",
+            null,
+            "help",
+            null,
+            "gpt",
+            null,
+            "help",
+            null,
+            "5050",
+          ];
           document.getElementById("bonus-node").classList.add("hidden");
-          c.style.transform = "rotate(0deg)";
+          if (gifts[idx]) {
+            state.tools[gifts[idx]]++;
+            pop("🎁 QUÀ", `Thêm 1 lượt ${gifts[idx].toUpperCase()}`, showLucky);
+          } else pop("🤡 ÔI NO", "Vào ô cái nịt rồi!", showLucky);
           btn.disabled = false;
-        }, 5100);
+          c.style.transition = "none";
+          c.style.transform = "rotate(0deg)";
+        }, 5300);
       }
 
-      function showPop(t, b, bt, cb) {
-        document.getElementById("m-title").textContent = t;
-        document.getElementById("m-body").innerHTML = b;
-        const btn = document.getElementById("m-btn");
-        btn.textContent = bt;
-        btn.onclick = cb;
-        document.getElementById("modal-bg").classList.remove("hidden");
-      }
-      function hidePop() {
-        document.getElementById("modal-bg").classList.add("hidden");
-      }
       function finish() {
         document.getElementById("quiz-node").classList.add("hidden");
         document.getElementById("end-node").classList.remove("hidden");
         document.getElementById("final-res").textContent =
           state.score.toFixed(1);
+      }
+
+      function toggleFS() {
+        if (!document.fullscreenElement)
+          document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
       }
     </script>
   </body>
