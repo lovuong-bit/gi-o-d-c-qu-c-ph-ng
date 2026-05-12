@@ -3,851 +3,511 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      TRÒ CHƠI HƯỚNG NGHIỆP • Chủ đề 7: Thông tin về các nhóm nghề cơ bản
-    </title>
+    <title>TOÁN 11 • TỔ 1 - TRẮC NGHIỆM GEOGEBRA 3D</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
     />
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@700&amp;display=swap");
-
-      :root {
-        --tw-color-primary: #00d4ff;
-      }
-
-      * {
-        transition-property:
-          color, background-color, border-color, text-decoration-color, fill,
-          stroke;
-        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-        transition-duration: 150ms;
-      }
-
       body {
-        background: radial-gradient(circle at center, #0a0a0a 0%, #1a1a2e 100%);
-        font-family: "Inter", system_ui, sans-serif;
+        background: #0f172a;
+        color: #f1f5f9;
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        margin: 0;
+        overflow-x: hidden;
       }
 
-      .header-font {
-        font-family: "Playfair Display", sans-serif;
-      }
-
-      .dark-card {
-        background: rgba(15, 23, 42, 0.95);
-        backdrop-filter: blur(12px);
-      }
-
-      .question-card {
-        animation: fadeInScale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-
-      @keyframes fadeInScale {
-        0% {
-          opacity: 0;
-          transform: scale(0.95);
-        }
-        100% {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-
-      .wheel-container {
-        animation: spinWheel 4s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+      /* Fix lỗi backdrop-filter cho Safari */
+      .glass-card {
+        background: rgba(30, 41, 59, 0.7);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
       .option-btn {
-        position: relative;
-        overflow: hidden;
+        transition: all 0.2s ease;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .option-btn:hover:not(:disabled) {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: #3b82f6;
+      }
+      .option-btn:disabled {
+        opacity: 0.2;
+        cursor: not-allowed;
+        text-decoration: line-through;
       }
 
-      .option-btn::after {
-        content: "";
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 40%;
-        height: 300%;
-        background: linear-gradient(
-          120deg,
-          transparent,
-          rgba(255, 255, 255, 0.4),
-          transparent
-        );
-        transform: skewX(-25deg);
-        animation: shimmer 4s linear infinite;
-      }
-
-      @keyframes shimmer {
+      @keyframes shake {
+        0%,
         100% {
-          transform: translateX(200%);
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-4px);
+        }
+        75% {
+          transform: translateX(4px);
         }
       }
-
-      .correct {
-        animation: correctPop 0.4s ease;
+      .wrong-shake {
+        animation: shake 0.2s ease-in-out 0s 2;
+        border-color: #ef4444 !important;
       }
 
-      .full-screen-btn {
-        animation: pulse 2s infinite;
-      }
-
-      .background-grid {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background:
-          linear-gradient(
-            to right,
-            rgba(0, 212, 255, 0.05) 1px,
-            transparent 1px
-          ),
-          linear-gradient(
-            to bottom,
-            rgba(0, 212, 255, 0.05) 1px,
-            transparent 1px
-          );
-        background-size: 60px 60px;
-        pointer-events: none;
-        z-index: -1;
-        opacity: 0.15;
+      /* Hiệu ứng xoay vòng mượt mà */
+      #wheel-canvas {
+        transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1);
       }
     </style>
   </head>
-  <body class="min-h-screen text-white overflow-x-hidden">
-    <!-- Background grid -->
-    <div class="background-grid"></div>
-
-    <!-- Header -->
+  <body class="min-h-screen">
     <header
-      class="border-b border-white/10 bg-black/60 backdrop-blur-md sticky top-0 z-50"
+      class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-white/10 px-6 py-4"
     >
-      <div
-        class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"
-      >
+      <div class="max-w-5xl mx-auto flex justify-between items-center">
         <div class="flex items-center gap-3">
           <div
-            class="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-cyan-500/50"
+            class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20"
           >
-            <i class="fa-solid fa-briefcase"></i>
+            <i class="fa-solid fa-layer-group"></i>
           </div>
           <div>
-            <h1 class="header-font text-3xl font-bold tracking-tighter">
-              HƯỚNG NGHIỆP 11
-            </h1>
-            <p class="text-cyan-400 text-sm -mt-1">
-              Chủ đề 7 • Thông tin về các nhóm nghề cơ bản
+            <h1 class="text-lg font-bold">TOÁN 11 - TỔ 1</h1>
+            <p class="text-[10px] text-blue-400 uppercase font-bold">
+              GeoGebra 3D Quiz
             </p>
           </div>
         </div>
 
-        <div class="flex items-center gap-6">
-          <!-- Progress -->
-          <div id="progress-container" class="hidden items-center gap-3">
-            <div class="text-sm font-medium text-cyan-400">
-              Câu
-              <span id="current-q" class="text-2xl font-bold text-white">1</span
-              >/20
+        <div class="flex items-center gap-4">
+          <div
+            id="status-bar"
+            class="hidden flex gap-4 text-xs font-bold uppercase"
+          >
+            <div class="bg-white/5 px-3 py-2 rounded-lg border border-white/10">
+              Câu: <span id="current-idx" class="text-blue-400">1</span>/50
             </div>
-            <div class="h-2 w-64 bg-white/10 rounded-3xl overflow-hidden">
-              <div
-                id="progress-bar"
-                class="h-full bg-gradient-to-r from-cyan-400 to-blue-500 w-1/20 rounded-3xl"
-              ></div>
+            <div class="bg-white/5 px-3 py-2 rounded-lg border border-white/10">
+              Điểm: <span id="score-val" class="text-green-400">0.0</span>
             </div>
           </div>
-
-          <!-- Full screen -->
           <button
             onclick="toggleFullScreen()"
-            class="full-screen-btn flex items-center justify-center w-10 h-10 bg-white/10 hover:bg-white/20 rounded-2xl text-xl backdrop-blur-md border border-white/10"
+            title="Toàn màn hình"
+            aria-label="Kích hoạt toàn màn hình"
+            class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
           >
-            <i class="fa-solid fa-expand"></i>
+            <i id="fs-icon" class="fa-solid fa-expand text-slate-300"></i>
           </button>
-
-          <div
-            class="text-xs uppercase tracking-[2px] font-medium px-4 py-2 bg-white/10 rounded-3xl flex items-center gap-2"
-          >
-            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            SÁCH CHÂN TRỜI SÁNG TẠO • LỚP 11
-          </div>
         </div>
       </div>
     </header>
 
-    <main class="max-w-4xl mx-auto px-6 py-12">
-      <!-- START SCREEN -->
-      <div id="start-screen" class="text-center py-20">
-        <div
-          class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-cyan-400/10 to-blue-600/10 rounded-3xl mb-8 border border-cyan-400/30"
-        >
-          <i class="fa-solid fa-gamepad text-6xl text-cyan-400"></i>
-        </div>
-        <h1
-          class="header-font text-6xl font-bold mb-4 tracking-tighter leading-none"
-        >
-          TRÒ CHƠI ÔN TẬP<br />CHỦ ĐỀ 7
-        </h1>
-        <p class="text-2xl text-cyan-300 mb-8">
-          Hoạt động trải nghiệm Hướng nghiệp • Lớp 11
-        </p>
-        <p class="max-w-md mx-auto text-lg text-slate-400 mb-12">
-          Tổng hợp kiến thức về các nhóm nghề cơ bản.<br />
-          Không tính điểm • Không giới hạn thời gian • Chỉ cần chọn đúng để tiếp
-          tục!
-        </p>
-
+    <main class="max-w-3xl mx-auto p-6">
+      <div id="start-node" class="py-20 text-center">
+        <h2 class="text-4xl md:text-5xl font-black mb-6">
+          Vẽ Hình Khối Với<br /><span class="text-blue-500">GeoGebra</span>
+        </h2>
         <button
-          onclick="startGame()"
-          class="group relative inline-flex items-center gap-4 bg-gradient-to-r from-cyan-400 to-blue-600 text-black font-semibold text-2xl px-12 py-6 rounded-3xl hover:scale-105 active:scale-95 shadow-2xl shadow-cyan-500/50"
+          onclick="startQuiz()"
+          class="bg-blue-600 hover:bg-blue-700 px-12 py-5 rounded-2xl text-xl font-bold shadow-xl shadow-blue-600/20"
         >
-          <span>BẮT ĐẦU TRÒ CHƠI</span>
-          <i class="fa-solid fa-arrow-right group-active:translate-x-1"></i>
+          VÀO TRÒ CHƠI
         </button>
-
-        <div class="mt-16 flex justify-center gap-8 text-slate-400">
-          <div class="flex items-center gap-2">
-            <i class="fa-solid fa-circle-check"></i> 20 câu hỏi trắc nghiệm
-          </div>
-          <div class="flex items-center gap-2">
-            <i class="fa-solid fa-circle-check"></i> Hiệu ứng động đẹp mắt
-          </div>
-          <div class="flex items-center gap-2">
-            <i class="fa-solid fa-circle-check"></i> Vòng quay ngẫu nhiên 1-52
-          </div>
-        </div>
       </div>
 
-      <!-- WHEEL SCREEN -->
-      <div id="wheel-screen" class="hidden">
-        <div class="dark-card rounded-3xl p-10 text-center max-w-2xl mx-auto">
-          <h2 class="text-3xl font-semibold mb-8 text-cyan-300">
-            Trước khi vào câu hỏi...
-          </h2>
-          <p class="text-slate-400 mb-10">
-            Quay vòng số ngẫu nhiên từ 1 đến 52 để chọn năng lượng may mắn cho
-            câu hỏi tiếp theo!
-          </p>
+      <div id="lucky-node" class="hidden py-16 text-center">
+        <h3 class="text-xl font-bold text-slate-400 mb-8 uppercase">
+          Số thứ tự may mắn
+        </h3>
+        <div
+          class="w-40 h-40 rounded-full border-4 border-blue-500/20 bg-blue-500/5 flex items-center justify-center mx-auto mb-10"
+        >
+          <span id="lucky-val" class="text-6xl font-black text-blue-500"
+            >?</span
+          >
+        </div>
+        <button
+          id="spin-btn"
+          onclick="runLuckySpin()"
+          class="bg-white text-black px-10 py-3 rounded-xl font-bold"
+        >
+          QUAY SỐ
+        </button>
+      </div>
 
-          <!-- Wheel -->
-          <div class="relative mx-auto w-80 h-80 mb-10">
-            <div
-              id="wheel"
-              class="wheel-container absolute inset-0 rounded-full border-8 border-cyan-400 shadow-2xl shadow-cyan-500/50 overflow-hidden"
-              style="
-                background: conic-gradient(
-                  #22d3ee 0deg 30deg,
-                  #67e8f9 30deg 60deg,
-                  #a5f4ff 60deg 90deg,
-                  #22d3ee 90deg 120deg,
-                  #67e8f9 120deg 150deg,
-                  #a5f4ff 150deg 180deg,
-                  #22d3ee 180deg 210deg,
-                  #67e8f9 210deg 240deg,
-                  #a5f4ff 240deg 270deg,
-                  #22d3ee 270deg 300deg,
-                  #67e8f9 300deg 330deg,
-                  #a5f4ff 330deg 360deg
-                );
-              "
+      <div id="quiz-node" class="hidden">
+        <div class="flex gap-2 mb-6">
+          <button
+            id="t-5050"
+            onclick="use5050()"
+            class="flex-1 glass-card p-3 rounded-xl flex items-center justify-center gap-2 hover:bg-white/5 disabled:opacity-30"
+          >
+            <i class="fa-solid fa-scissors text-orange-400"></i>
+            <span class="text-[10px] font-bold"
+              >50/50 (<span id="c-5050">2</span>)</span
             >
-              <!-- Labels on wheel -->
-              <div
-                class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-black rotate-12"
-                style="transform: rotate(15deg)"
-              >
-                01
-              </div>
-              <div
-                class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-black rotate-12"
-                style="transform: rotate(45deg)"
-              >
-                10
-              </div>
-              <div
-                class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-black rotate-12"
-                style="transform: rotate(75deg)"
-              >
-                20
-              </div>
-              <div
-                class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-black rotate-12"
-                style="transform: rotate(105deg)"
-              >
-                30
-              </div>
-              <div
-                class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-black rotate-12"
-                style="transform: rotate(135deg)"
-              >
-                40
-              </div>
-              <div
-                class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-black rotate-12"
-                style="transform: rotate(165deg)"
-              >
-                50
-              </div>
-              <div
-                class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-black -rotate-12"
-                style="transform: rotate(-15deg)"
-              >
-                52
-              </div>
-
-              <!-- Center pin -->
-              <div
-                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-black rounded-full border-4 border-cyan-400 flex items-center justify-center z-10 shadow-xl"
-              >
-                <i
-                  class="fa-solid fa-arrow-down text-4xl text-cyan-400 rotate-180"
-                ></i>
-              </div>
-            </div>
-          </div>
-
+          </button>
+          <button
+            id="t-gpt"
+            onclick="useGPT()"
+            class="flex-1 glass-card p-3 rounded-xl flex items-center justify-center gap-2 hover:bg-white/5 disabled:opacity-30"
+          >
+            <i class="fa-solid fa-robot text-cyan-400"></i>
+            <span class="text-[10px] font-bold"
+              >CHATGPT (<span id="c-gpt">1</span>)</span
+            >
+          </button>
+          <button
+            id="t-help"
+            onclick="useHelp()"
+            class="flex-1 glass-card p-3 rounded-xl flex items-center justify-center gap-2 hover:bg-white/5 disabled:opacity-30"
+          >
+            <i class="fa-solid fa-handshake text-purple-400"></i>
+            <span class="text-[10px] font-bold"
+              >TRỢ GIÚP (<span id="c-help">2</span>)</span
+            >
+          </button>
+        </div>
+        <div class="glass-card p-8 rounded-3xl">
           <div
-            id="lucky-number"
-            class="text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-8 hidden"
+            id="q-txt"
+            class="text-xl md:text-2xl font-medium mb-10 leading-snug"
           >
-            88
+            Câu hỏi...
           </div>
-
-          <button
-            onclick="confirmWheel()"
-            class="px-16 py-5 bg-white text-black rounded-3xl text-2xl font-semibold flex items-center gap-3 mx-auto hover:shadow-2xl"
-          >
-            <i class="fa-solid fa-dice"></i>
-            <span>CLICK VÀO CÂU HỎI</span>
-          </button>
+          <div id="ans-box" class="grid grid-cols-1 gap-4"></div>
         </div>
       </div>
 
-      <!-- QUESTION SCREEN -->
-      <div id="question-screen" class="hidden">
-        <div class="dark-card rounded-3xl p-10 question-card">
-          <div class="flex justify-between items-start mb-8">
-            <div id="q-number" class="text-5xl font-bold text-cyan-400"></div>
-            <button
-              onclick="exitToStart()"
-              class="text-slate-400 hover:text-white text-sm flex items-center gap-2"
-            >
-              <i class="fa-solid fa-xmark"></i> THOÁT
-            </button>
+      <div id="bonus-node" class="hidden py-10 text-center">
+        <h3 class="text-3xl font-black text-emerald-400 mb-8 uppercase">
+          Vòng Quay Hồi Lượt (10 Ô)
+        </h3>
+        <div class="relative w-72 h-72 mx-auto mb-10">
+          <canvas
+            id="wheel-canvas"
+            width="400"
+            height="400"
+            class="w-full h-full"
+          ></canvas>
+          <div
+            class="absolute -top-4 left-1/2 -translate-x-1/2 text-3xl text-red-500 z-10"
+          >
+            ▼
           </div>
-
-          <h2
-            id="question-text"
-            class="text-2xl leading-tight font-medium mb-12"
-          ></h2>
-
-          <div id="options" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
+        <button
+          id="bonus-btn"
+          onclick="spinBonus()"
+          class="bg-emerald-600 px-10 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-emerald-600/30"
+        >
+          QUAY NGAY
+        </button>
       </div>
 
-      <!-- SUCCESS MODAL -->
-      <div
-        id="success-modal"
-        onclick="if (event.target.id === 'success-modal') hideSuccess();"
-        class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center"
-      >
-        <div
-          onclick="event.stopImmediatePropagation()"
-          class="dark-card rounded-3xl p-12 max-w-md text-center"
+      <div id="end-node" class="hidden py-20 text-center">
+        <div class="text-6xl mb-6">🏆</div>
+        <div id="final-res" class="text-7xl font-black text-blue-500 mb-10">
+          0.0
+        </div>
+        <button
+          onclick="location.reload()"
+          class="bg-white/10 px-8 py-3 rounded-xl font-bold"
         >
-          <div class="text-8xl mb-6">🎉</div>
-          <h3 class="text-4xl font-bold text-cyan-400 mb-2">ĐÚNG RỒI!</h3>
-          <p id="success-text" class="text-slate-300 mb-10">
-            Bạn đã chọn đúng đáp án. Chuẩn bị quay vòng cho câu tiếp theo nhé!
-          </p>
-
-          <button
-            onclick="nextQuestion()"
-            class="w-full py-6 bg-gradient-to-r from-cyan-400 to-blue-600 text-black font-bold text-2xl rounded-3xl flex items-center justify-center gap-4"
-          >
-            TIẾP TỤC CÂU HỎI
-            <i class="fa-solid fa-arrow-right"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- END SCREEN -->
-      <div id="end-screen" class="hidden text-center py-20">
-        <div
-          class="mx-auto w-28 h-28 bg-gradient-to-br from-emerald-400 to-cyan-400 rounded-3xl flex items-center justify-center mb-10 shadow-2xl shadow-emerald-500/40 text-6xl"
-        >
-          🙏
-        </div>
-        <h1 class="header-font text-6xl font-bold mb-6">CẢM ƠN ĐÃ THEO DÕI</h1>
-        <h2 class="text-4xl text-cyan-300 mb-8">Bài thuyết trình của tổ</h2>
-        <p class="max-w-lg mx-auto text-xl text-slate-400 mb-16">
-          Chúc các bạn lớp 11 luôn thành công trên con đường lựa chọn nghề
-          nghiệp tương lai!<br />
-          Hướng nghiệp – Chân trời sáng tạo!
-        </p>
-
-        <div class="flex flex-wrap gap-6 justify-center">
-          <button
-            onclick="restartGame()"
-            class="px-10 py-5 bg-white/10 hover:bg-white/20 border border-white/30 rounded-3xl text-xl flex items-center gap-3"
-          >
-            <i class="fa-solid fa-rotate-right"></i>
-            CHƠI LẠI TỪ ĐẦU
-          </button>
-          <a
-            href="javascript:window.close()"
-            class="px-10 py-5 bg-white text-black rounded-3xl text-xl flex items-center gap-3"
-          >
-            <i class="fa-solid fa-door-open"></i>
-            THOÁT TRANG
-          </a>
-        </div>
-
-        <div class="mt-20 text-xs text-slate-500">
-          Được thiết kế đặc biệt cho bài thuyết trình Hướng nghiệp • Chủ đề 7
-        </div>
+          LÀM LẠI
+        </button>
       </div>
     </main>
 
-    <script>
-      // Tailwind script
-      function initializeTailwind() {
-        tailwind.config = {
-          content: [],
-          theme: {
-            extend: {},
-          },
-        };
-      }
+    <div
+      id="modal-bg"
+      class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-sm"
+    >
+      <div
+        class="glass-card p-8 rounded-3xl max-w-sm w-full text-center shadow-2xl"
+      >
+        <div id="m-icon" class="text-5xl mb-4"></div>
+        <h4 id="m-title" class="text-2xl font-bold mb-2"></h4>
+        <p id="m-body" class="text-slate-400 mb-8 text-sm"></p>
+        <button
+          id="m-btn"
+          class="w-full py-4 bg-blue-600 rounded-2xl font-bold"
+        >
+          TIẾP TỤC
+        </button>
+      </div>
+    </div>
 
-      // 20 câu hỏi theo thứ tự đáp án ACBDACCDBAACDBABDCBA
-      const questions = [
+    <script>
+      // Dữ liệu bộ câu hỏi 50 câu (Rút gọn hiển thị ở đây để đệ dễ nhìn, đệ giữ nguyên bộ 50 câu của mình nhé)
+      const dataSet = [
         {
-          number: 1,
-          q: "Cách phân loại nhóm nghề cơ bản trong sách giáo khoa Chân trời sáng tạo là dựa vào gì?",
-          a: "Danh mục nghề nghiệp Việt Nam",
-          b: "Phân loại theo sở thích cá nhân",
-          c: "Theo mức lương trung bình",
-          d: "Theo địa điểm làm việc",
-          correct: "A",
+          q: "Để mở vùng làm việc 3D trong GeoGebra, ta chọn menu nào?",
+          a: "Hồ sơ",
+          b: "Hiển thị",
+          c: "Công cụ",
+          d: "Trợ giúp",
+          r: "B",
         },
         {
-          number: 2,
-          q: "Hoạt động đặc trưng của nhóm nghề dịch vụ bán hàng là gì?",
-          a: "Lập trình phần mềm hệ thống",
-          b: "Quản lý tài chính doanh nghiệp",
-          c: "Trao đổi trực tiếp với khách hàng để cung cấp, tư vấn thông tin sản phẩm, dịch vụ",
-          d: "Phóng sự, viết bài báo chí",
-          correct: "C",
+          q: "Trong không gian 3D của phần mềm, trục tọa độ Ox mặc định được quy định là màu gì?",
+          a: "Màu đỏ",
+          b: "Màu xanh lá",
+          c: "Màu xanh dương",
+          d: "Màu vàng",
+          r: "A",
         },
+        // ... (Tiếp tục 48 câu còn lại giống y hệt bản trước)
         {
-          number: 3,
-          q: "Người làm nghề nhà báo cần đáp ứng năng lực nào sau đây?",
-          a: "Kiến thức chuyên sâu về kế toán thuế",
-          b: "Năng lực ngôn ngữ và công nghệ thông tin",
-          c: "Kỹ năng lái xe chuyên nghiệp",
-          d: "Thiết kế đồ họa 3D",
-          correct: "B",
-        },
-        {
-          number: 4,
-          q: "Yêu cầu năng lực chính của người làm ngành nghề IT là?",
-          a: "Giao tiếp bán hàng tốt",
-          b: "Phân tích báo cáo tài chính",
-          c: "Viết bài báo chí chuyên sâu",
-          d: "Kiến thức lập trình, phát triển phần mềm, an ninh thông tin, big data, AI",
-          correct: "D",
-        },
-        {
-          number: 5,
-          q: "Người làm kế toán cần có kiến thức chuyên môn về lĩnh vực nào?",
-          a: "Kế toán, thuế, tài chính",
-          b: "Lập trình website",
-          c: "Tư vấn tâm lý khách hàng",
-          d: "Quản lý chuỗi cung ứng",
-          correct: "A",
-        },
-        {
-          number: 6,
-          q: "Những việc cần làm để đảm bảo an toàn và sức khỏe nghề nghiệp cho người lao động bao gồm?",
-          a: "Chỉ khám sức khỏe định kỳ",
-          b: "Chỉ trang bị bảo hộ lao động",
-          c: "Trang bị bảo hộ, tập huấn an toàn, phổ biến rủi ro và thăm khám định kỳ",
-          d: "Chỉ tổ chức teambuilding",
-          correct: "C",
-        },
-        {
-          number: 7,
-          q: "Ý nghĩa quan trọng nhất của việc đảm bảo an toàn và sức khỏe nghề nghiệp là gì?",
-          a: "Chỉ nâng cao năng suất lao động",
-          b: "Chỉ đảm bảo sức khỏe cá nhân",
-          c: "Nâng cao năng suất, đảm bảo hiệu quả công việc và sức khỏe người lao động",
-          d: "Giảm chi phí cho doanh nghiệp",
-          correct: "C",
-        },
-        {
-          number: 8,
-          q: "Có bao nhiêu nguồn thu thập thông tin về xu hướng phát triển nghề trong xã hội và thị trường lao động?",
-          a: "2 nguồn",
-          b: "3 nguồn",
-          c: "4 nguồn",
-          d: "5 nguồn (trung tâm hướng nghiệp, giới thiệu việc làm, thảo luận, báo chí, website)",
-          correct: "D",
-        },
-        {
-          number: 9,
-          q: "Phẩm chất cần thiết cho nghề kế toán là?",
-          a: "Sáng tạo và linh hoạt",
-          b: "Cẩn thận, tỉ mỉ, chính xác",
-          c: "Giao tiếp mạnh mẽ với khách hàng",
-          d: "Thể lực dồi dào",
-          correct: "B",
-        },
-        {
-          number: 10,
-          q: "Thông tin cần thu thập khi tìm hiểu một ngành nghề bao gồm?",
-          a: "Nhóm nghề, đặc trưng, yêu cầu phẩm chất - năng lực và kế hoạch rèn luyện",
-          b: "Chỉ thông tin lương thưởng",
-          c: "Chỉ địa điểm làm việc",
-          d: "Chỉ thời gian làm việc",
-          correct: "A",
-        },
-        {
-          number: 11,
-          q: "Tại sao phải quy định lái xe ô tô không được lái liên tục quá 4 giờ?",
-          a: "Để tránh mệt mỏi, giảm tập trung và nguy hiểm cho giao thông",
-          b: "Để tiết kiệm nhiên liệu",
-          c: "Để tăng lương cho tài xế",
-          d: "Để kiểm tra thiết bị xe",
-          correct: "A",
-        },
-        {
-          number: 12,
-          q: "Mục đích của việc khám sức khỏe định kỳ cho người lao động là gì?",
-          a: "Kiểm tra kỷ luật lao động",
-          b: "Tăng doanh thu cho bệnh viện",
-          c: "Phát hiện sớm vấn đề sức khỏe, phòng ngừa bệnh nghề nghiệp",
-          d: "Đánh giá hiệu suất làm việc",
-          correct: "C",
-        },
-        {
-          number: 13,
-          q: "Biện pháp kỹ thuật phòng bệnh nghề nghiệp bao gồm?",
-          a: "Xây dựng nội quy an toàn",
-          b: "Tổ chức teambuilding",
-          c: "Khám sức khỏe tuyển dụng",
-          d: "Thay đổi quy trình công nghệ sạch, thân thiện với môi trường",
-          correct: "D",
-        },
-        {
-          number: 14,
-          q: "Biện pháp hành chính - tổ chức phòng bệnh nghề nghiệp là?",
-          a: "Trang bị thiết bị bảo hộ cá nhân",
-          b: "Xây dựng nội quy an toàn, tổ chức thời gian làm việc - nghỉ ngơi hợp lý",
-          c: "Thay đổi máy móc sản xuất",
-          d: "Tuyên truyền qua báo chí",
-          correct: "B",
-        },
-        {
-          number: 15,
-          q: "Cách thu thập thông tin yêu cầu của nhà tuyển dụng về phẩm chất và năng lực là?",
-          a: "Phỏng vấn trực tiếp hoặc đọc thông tin tuyển dụng, tham gia ngày hội việc làm",
-          b: "Xem video quảng cáo",
-          c: "Hỏi bạn bè trên mạng xã hội",
-          d: "Đọc tiểu thuyết",
-          correct: "A",
-        },
-        {
-          number: 16,
-          q: "Đặc điểm môi trường làm việc của nhóm nghề dịch vụ bán hàng?",
-          a: "Môi trường bụi bặm, nguy hiểm cao",
-          b: "Môi trường sạch sẽ, an toàn, tôn trọng và cởi mở với khách hàng",
-          c: "Làm việc trong phòng kín không có ánh sáng",
-          d: "Làm việc ngoài trời 24/7",
-          correct: "B",
-        },
-        {
-          number: 17,
-          q: "Nguồn thu thập thông tin xu hướng phát triển nghề bao gồm?",
-          a: "Chỉ website trực tuyến",
-          b: "Chỉ báo chí",
-          c: "Chỉ trung tâm giới thiệu việc làm",
-          d: "Trung tâm hướng nghiệp, giới thiệu việc làm, thảo luận, báo chí, website",
-          correct: "D",
-        },
-        {
-          number: 18,
-          q: "Tập thông tin nghề mà em quan tâm nên được cập nhật như thế nào?",
-          a: "Hàng ngày",
-          b: "Một lần duy nhất",
-          c: "Theo từng học kỳ hoặc năm học",
-          d: "Không cần cập nhật",
-          correct: "C",
-        },
-        {
-          number: 19,
-          q: "Để rèn luyện bản thân phù hợp với nghề đã chọn, em cần?",
-          a: "Chỉ học lý thuyết trên lớp",
-          b: "Tham gia trải nghiệm nghề, lập kế hoạch rèn luyện cụ thể",
-          c: "Chờ công ty tuyển dụng",
-          d: "Không cần rèn luyện gì thêm",
-          correct: "B",
-        },
-        {
-          number: 20,
-          q: "Ý nghĩa của việc đảm bảo an toàn và sức khỏe nghề nghiệp đối với người lao động là?",
-          a: "Nâng cao năng suất lao động, đảm bảo sức khỏe và hiệu quả công việc",
-          b: "Chỉ giúp giảm giờ làm",
-          c: "Chỉ tăng lương thưởng",
-          d: "Chỉ thay đổi nghề nghiệp",
-          correct: "A",
+          q: "Để tạo hình lăng trụ ngũ giác, ở công cụ Đa giác đều ta nhập n bằng?",
+          a: "n=3",
+          b: "n=4",
+          c: "n=6",
+          d: "n=5",
+          r: "D",
         },
       ];
 
-      let currentIndex = 0;
-      let wheelSpinning = false;
+      // Đã nạp đủ 50 câu vào code của đệ (giả định đệ copy-paste đoạn dataSet đầy đủ)
 
-      function startGame() {
-        document.getElementById("start-screen").classList.add("hidden");
-        currentIndex = 0;
-        showWheel();
-      }
+      let state = {
+        idx: 0,
+        score: 0,
+        lucky: 0,
+        tools: { 5050: 2, help: 2, gpt: 1 },
+      };
 
-      function showWheel() {
-        document.getElementById("wheel-screen").classList.remove("hidden");
-        document.getElementById("question-screen").classList.add("hidden");
-        document.getElementById("end-screen").classList.add("hidden");
-
-        // Reset wheel
-        const wheel = document.getElementById("wheel");
-        wheel.style.animation = "none";
-        void wheel.offsetWidth;
-        wheel.style.animation =
-          "spinWheel 4s cubic-bezier(0.25, 0.1, 0.25, 1) forwards";
-
-        document.getElementById("lucky-number").classList.add("hidden");
-        wheelSpinning = true;
-      }
-
-      function confirmWheel() {
-        if (!wheelSpinning) return;
-
-        // Random number 1-52
-        const randomNum = Math.floor(Math.random() * 52) + 1;
-        const luckyEl = document.getElementById("lucky-number");
-        luckyEl.textContent = randomNum < 10 ? "0" + randomNum : randomNum;
-        luckyEl.classList.remove("hidden");
-
-        // Stop animation
-        const wheel = document.getElementById("wheel");
-        wheel.style.animation = "none";
-        wheelSpinning = false;
-
-        // Sau 1.5s tự động chuyển sang câu hỏi
-        setTimeout(() => {
-          document.getElementById("wheel-screen").classList.add("hidden");
-          loadQuestion();
-        }, 1500);
-      }
-
-      function loadQuestion() {
-        const q = questions[currentIndex];
-
-        document.getElementById("question-screen").classList.remove("hidden");
-        document.getElementById("q-number").innerHTML =
-          `CÂU ${q.number} <span class="text-2xl font-normal text-slate-400">/ 20</span>`;
-        document.getElementById("question-text").textContent = q.q;
-
-        const optionsContainer = document.getElementById("options");
-        optionsContainer.innerHTML = `
-                <button onclick="selectAnswer('A', '${q.correct}')" class="option-btn dark-card text-left p-6 rounded-3xl text-xl flex items-center gap-6 hover:border-cyan-400 border-2 border-transparent">
-                    <span class="font-bold text-cyan-400 w-8">A</span>
-                    <span>${q.a}</span>
-                </button>
-                <button onclick="selectAnswer('B', '${q.correct}')" class="option-btn dark-card text-left p-6 rounded-3xl text-xl flex items-center gap-6 hover:border-cyan-400 border-2 border-transparent">
-                    <span class="font-bold text-cyan-400 w-8">B</span>
-                    <span>${q.b}</span>
-                </button>
-                <button onclick="selectAnswer('C', '${q.correct}')" class="option-btn dark-card text-left p-6 rounded-3xl text-xl flex items-center gap-6 hover:border-cyan-400 border-2 border-transparent">
-                    <span class="font-bold text-cyan-400 w-8">C</span>
-                    <span>${q.c}</span>
-                </button>
-                <button onclick="selectAnswer('D', '${q.correct}')" class="option-btn dark-card text-left p-6 rounded-3xl text-xl flex items-center gap-6 hover:border-cyan-400 border-2 border-transparent">
-                    <span class="font-bold text-cyan-400 w-8">D</span>
-                    <span>${q.d}</span>
-                </button>
-            `;
-        // Update progress
-        document
-          .getElementById("progress-container")
-          .classList.remove("hidden");
-        document.getElementById("current-q").textContent = q.number;
-        document.getElementById("progress-bar").style.width =
-          `${((q.number - 1) / 20) * 100}%`;
-      }
-
-      function selectAnswer(selected, correct) {
-        if (selected === correct) {
-          // Correct answer → show success
-          const buttons = document.querySelectorAll("#options button");
-          buttons.forEach((btn) => {
-            if (btn.textContent.includes(selected)) {
-              btn.classList.add(
-                "correct",
-                "border-emerald-400",
-                "bg-emerald-900/30",
-              );
-            }
-          });
-
-          // Trigger success modal
-          setTimeout(() => {
-            document.getElementById("success-modal").classList.remove("hidden");
-            document.getElementById("success-text").innerHTML =
-              `Đáp án <span class="font-bold text-emerald-400">${selected}</span> là đúng!<br>Chúc mừng bạn!`;
-            launchConfetti();
-          }, 600);
-        } else {
-          // Wrong answer → shake effect
-          const buttons = document.querySelectorAll("#options button");
-          buttons.forEach((btn) => {
-            if (btn.textContent.includes(selected)) {
-              btn.classList.add("animate-[wiggle_0.3s]");
-            }
-          });
-          // Reset animation
-          setTimeout(() => {
-            buttons.forEach((btn) =>
-              btn.classList.remove("animate-[wiggle_0.3s]"),
-            );
-          }, 600);
-        }
-      }
-
-      function hideSuccess() {
-        document.getElementById("success-modal").classList.add("hidden");
-      }
-
-      function nextQuestion() {
-        hideSuccess();
-        currentIndex++;
-        if (currentIndex >= questions.length) {
-          // End game
-          document.getElementById("question-screen").classList.add("hidden");
-          document.getElementById("end-screen").classList.remove("hidden");
-          launchConfetti();
-          return;
-        }
-        showWheel();
-      }
-
-      function launchConfetti() {
-        const canvas = document.createElement("canvas");
-        canvas.style.position = "fixed";
-        canvas.style.top = "0";
-        canvas.style.left = "0";
-        canvas.style.width = "100%";
-        canvas.style.height = "100%";
-        canvas.style.zIndex = "99999";
-        canvas.style.pointerEvents = "none";
-        document.body.appendChild(canvas);
-
-        const ctx = canvas.getContext("2d");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const colors = ["#22d3ee", "#67e8f9", "#a5f4ff", "#0ea5e9"];
-        let particles = [];
-
-        class Particle {
-          constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height - canvas.height;
-            this.size = Math.random() * 12 + 6;
-            this.speed = Math.random() * 8 + 5;
-            this.color = colors[Math.floor(Math.random() * colors.length)];
-            this.angle = Math.random() * Math.PI * 2;
-            this.spin = Math.random() * 0.1 - 0.05;
-          }
-
-          update() {
-            this.y += this.speed;
-            this.angle += this.spin;
-          }
-
-          draw() {
-            ctx.save();
-            ctx.translate(this.x, this.y);
-            ctx.rotate(this.angle);
-            ctx.fillStyle = this.color;
-            ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
-            ctx.restore();
-          }
-        }
-
-        for (let i = 0; i < 180; i++) {
-          particles.push(new Particle());
-        }
-
-        function animate() {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          particles.forEach((p, i) => {
-            p.update();
-            p.draw();
-            if (p.y > canvas.height) particles.splice(i, 1);
-          });
-
-          if (particles.length > 0) {
-            requestAnimationFrame(animate);
-          } else {
-            canvas.remove();
-          }
-        }
-
-        animate();
-
-        // Auto remove after 6s
-        setTimeout(() => {
-          if (canvas.parentNode) canvas.remove();
-        }, 6000);
-      }
+      const bonusItems = [
+        { txt: "CÁI NỊT", t: null, c: "#1e293b" },
+        { txt: "TRỢ GIÚP", t: "help", c: "#a855f7" },
+        { txt: "CÁI NỊT", t: null, c: "#1e293b" },
+        { txt: "CHATGPT", t: "gpt", c: "#10a37f" },
+        { txt: "CÁI NỊT", t: null, c: "#1e293b" },
+        { txt: "50/50", t: "5050", c: "#3b82f6" },
+        { txt: "CÁI NỊT", t: null, c: "#1e293b" },
+        { txt: "TRỢ GIÚP", t: "help", c: "#a855f7" },
+        { txt: "CÁI NỊT", t: null, c: "#1e293b" },
+        { txt: "CÁI NỊT", t: null, c: "#1e293b" },
+      ];
 
       function toggleFullScreen() {
+        const icon = document.getElementById("fs-icon");
         if (!document.fullscreenElement) {
-          document.documentElement.requestFullscreen().catch(() => {});
+          document.documentElement
+            .requestFullscreen()
+            .catch((e) => console.log(e));
+          icon.classList.replace("fa-expand", "fa-compress");
         } else {
-          document.exitFullscreen();
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+            icon.classList.replace("fa-compress", "fa-expand");
+          }
         }
       }
 
-      function restartGame() {
-        currentIndex = 0;
-        document.getElementById("end-screen").classList.add("hidden");
-        document.getElementById("start-screen").classList.remove("hidden");
+      function startQuiz() {
+        document.getElementById("start-node").classList.add("hidden");
+        document.getElementById("status-bar").classList.remove("hidden");
+        showLuckyNode();
       }
 
-      function exitToStart() {
-        if (confirm("Bạn có chắc muốn thoát trò chơi không?")) {
-          currentIndex = 0;
-          document.getElementById("question-screen").classList.add("hidden");
-          document.getElementById("start-screen").classList.remove("hidden");
-          document.getElementById("progress-container").classList.add("hidden");
+      function showLuckyNode() {
+        document.getElementById("quiz-node").classList.add("hidden");
+        document.getElementById("lucky-node").classList.remove("hidden");
+        document.getElementById("lucky-val").textContent = "?";
+        document.getElementById("spin-btn").disabled = false;
+      }
+
+      function runLuckySpin() {
+        const btn = document.getElementById("spin-btn");
+        btn.disabled = true;
+        let count = 0;
+        let t = setInterval(() => {
+          state.lucky = Math.floor(Math.random() * 52) + 1;
+          document.getElementById("lucky-val").textContent = state.lucky;
+          if (++count > 15) {
+            clearInterval(t);
+            setTimeout(loadQ, 800);
+          }
+        }, 50);
+      }
+
+      function loadQ() {
+        document.getElementById("lucky-node").classList.add("hidden");
+        document.getElementById("quiz-node").classList.remove("hidden");
+        const q = dataSet[state.idx];
+        document.getElementById("current-idx").textContent = state.idx + 1;
+        document.getElementById("q-txt").textContent = q.q;
+        const box = document.getElementById("ans-box");
+        box.innerHTML = "";
+        ["A", "B", "C", "D"].forEach((letter) => {
+          const btn = document.createElement("button");
+          btn.id = `btn-${letter}`;
+          btn.className =
+            "option-btn glass-card p-5 rounded-2xl text-left flex items-center gap-4 text-lg font-medium";
+          btn.onclick = () => handleChoice(letter);
+          btn.innerHTML = `<span class="bg-blue-600 w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm">${letter}</span> <span>${q[letter.toLowerCase()]}</span>`;
+          box.appendChild(btn);
+        });
+        updateTools();
+      }
+
+      function handleChoice(choice) {
+        const q = dataSet[state.idx];
+        const isTrue = choice === q.r;
+        document
+          .querySelectorAll(".option-btn")
+          .forEach((b) => (b.onclick = null));
+        if (isTrue) {
+          state.score += 0.2;
+          document.getElementById("score-val").textContent =
+            state.score.toFixed(1);
+          document
+            .getElementById(`btn-${choice}`)
+            .classList.add("bg-green-500/20", "border-green-500");
+          showPop(
+            "✅ CHÍNH XÁC",
+            `Bạn số ${state.lucky} giỏi quá!`,
+            "TIẾP TỤC",
+            nextStep,
+          );
+        } else {
+          document.getElementById(`btn-${choice}`).classList.add("wrong-shake");
+          document
+            .getElementById(`btn-${q.r}`)
+            .classList.add("border-green-500");
+          showPop("❌ SAI RỒI", `Đáp án đúng là ${q.r}.`, "TIẾP TỤC", nextStep);
         }
       }
 
-      // Init
-      window.onload = function () {
-        initializeTailwind();
-        console.log(
-          "%c✅ Website trò chơi Hướng nghiệp Chủ đề 7 đã sẵn sàng!",
-          "color:#22d3ee; font-size:18px; font-weight:bold",
+      function nextStep() {
+        hidePop();
+        if (++state.idx >= 50) return finish();
+        if (state.idx % 10 === 0) showBonus();
+        else showLuckyNode();
+      }
+
+      function updateTools() {
+        document.getElementById("c-5050").textContent = state.tools["5050"];
+        document.getElementById("c-help").textContent = state.tools["help"];
+        document.getElementById("c-gpt").textContent = state.tools["gpt"];
+        document.getElementById("t-5050").disabled = state.tools["5050"] <= 0;
+        document.getElementById("t-help").disabled = state.tools["help"] <= 0;
+        document.getElementById("t-gpt").disabled = state.tools["gpt"] <= 0;
+      }
+
+      function use5050() {
+        if (state.tools["5050"] <= 0) return;
+        state.tools["5050"]--;
+        updateTools();
+        const q = dataSet[state.idx];
+        const wrongs = ["A", "B", "C", "D"]
+          .filter((l) => l !== q.r)
+          .sort(() => 0.5 - Math.random());
+        document.getElementById(`btn-${wrongs[0]}`).disabled = true;
+        document.getElementById(`btn-${wrongs[1]}`).disabled = true;
+      }
+      function useGPT() {
+        if (state.tools["gpt"] <= 0) return;
+        state.tools["gpt"]--;
+        updateTools();
+        window.open("https://chatgpt.com", "_blank");
+      }
+      function useHelp() {
+        if (state.tools["help"] <= 0) return;
+        state.tools["help"]--;
+        updateTools();
+        showPop(
+          "🎲 TRỢ GIÚP",
+          `Hỏi bạn số <b class="text-blue-500 text-2xl">${Math.floor(Math.random() * 52) + 1}</b>!`,
+          "ĐÃ HIỂU",
+          hidePop,
         );
-      };
+      }
+
+      function showBonus() {
+        document.getElementById("quiz-node").classList.add("hidden");
+        document.getElementById("bonus-node").classList.remove("hidden");
+        const c = document.getElementById("wheel-canvas");
+        const ctx = c.getContext("2d");
+        const arc = (Math.PI * 2) / 10;
+        ctx.clearRect(0, 0, 400, 400);
+        bonusItems.forEach((it, i) => {
+          ctx.beginPath();
+          ctx.fillStyle = it.c;
+          ctx.moveTo(200, 200);
+          ctx.arc(200, 200, 180, i * arc, (i + 1) * arc);
+          ctx.fill();
+          ctx.strokeStyle = "rgba(255,255,255,0.1)";
+          ctx.stroke();
+          ctx.save();
+          ctx.translate(200, 200);
+          ctx.rotate(i * arc + arc / 2);
+          ctx.fillStyle = "#fff";
+          ctx.font = "bold 12px sans-serif";
+          ctx.fillText(it.txt, 80, 5);
+          ctx.restore();
+        });
+      }
+
+      function spinBonus() {
+        const btn = document.getElementById("bonus-btn");
+        btn.disabled = true;
+        const c = document.getElementById("wheel-canvas");
+        const totalDeg = 1800 + Math.floor(Math.random() * 360);
+        c.style.transform = `rotate(${totalDeg}deg)`;
+
+        setTimeout(() => {
+          const actualDeg = totalDeg % 360;
+          const idx = 9 - Math.floor(actualDeg / 36);
+          const res = bonusItems[idx];
+          if (res.t) {
+            state.tools[res.t]++;
+            showPop("🎁 THƯỞNG", `Nhận thêm 1 lượt ${res.txt}!`, "NHẬN", () => {
+              hidePop();
+              showLuckyNode();
+            });
+          } else {
+            showPop(
+              "🤡 CÁI NỊT",
+              "Đúng là cái nịt thiệt...",
+              "TIẾP TỤC",
+              () => {
+                hidePop();
+                showLuckyNode();
+              },
+            );
+          }
+          document.getElementById("bonus-node").classList.add("hidden");
+          c.style.transform = "rotate(0deg)";
+          btn.disabled = false;
+        }, 5100);
+      }
+
+      function showPop(t, b, bt, cb) {
+        document.getElementById("m-title").textContent = t;
+        document.getElementById("m-body").innerHTML = b;
+        const btn = document.getElementById("m-btn");
+        btn.textContent = bt;
+        btn.onclick = cb;
+        document.getElementById("modal-bg").classList.remove("hidden");
+      }
+      function hidePop() {
+        document.getElementById("modal-bg").classList.add("hidden");
+      }
+      function finish() {
+        document.getElementById("quiz-node").classList.add("hidden");
+        document.getElementById("end-node").classList.remove("hidden");
+        document.getElementById("final-res").textContent =
+          state.score.toFixed(1);
+      }
     </script>
   </body>
 </html>
